@@ -1,9 +1,9 @@
 from flask import request
 from flask_jwt_extended import jwt_required, get_current_user, jwt_refresh_token_required, get_jwt_identity, \
     create_access_token, create_refresh_token
-from flask_restful import Resource
 
 from ..common.database import User as UserModel
+from ..common.rest import Resource
 from ..common.util import auto_marshall
 
 __all__ = ['User', 'Login', 'Refresh']
