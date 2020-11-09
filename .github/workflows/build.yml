@@ -58,7 +58,7 @@ jobs:
           pipenv install --deploy --dev
 
       - name: Test with pytest
-          run: pytest tests.py --doctest-modules --junitxml=junit/test-results.xml
+        run: pytest tests.py --doctest-modules --junitxml=junit/test-results.xml
 
       - name: Lint with flake8
         run: |
