@@ -21,19 +21,25 @@ def admin_required(fn):
 def auto_marshall(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        result = fn(*args, **kwargs)
         code = 200
+        headers = {}
+        result = fn(*args, **kwargs)
         if type(result) is tuple:
-            result, code = result
+            if len(result) == 1:
+                (result) = result
+            elif len(result) == 2:
+                (result, code) = result
+            elif len(result) == 3:
+                (result, code, headers) = result
 
         if code != 200:
-            return result, code
+            return result, code, headers
 
         if hasattr(result, '__marshmallow__'):
-            schema = result.__marshmallow__()
-            return schema.dump(result, many=type(result) is list), code
+            schema = result.__marshmallow__
+            return schema.dump(result, many=type(result) is list), code, headers
         else:
-            return result, code
+            return result, code, headers
     return wrapper
 
 
