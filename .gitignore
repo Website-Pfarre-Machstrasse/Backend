@@ -1,3 +1,5 @@
 /Pipfile.lock
-
+/server/database.db
 /server/settings*.json
+/dist/
+/build/

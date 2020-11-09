@@ -1,0 +1,10 @@
+# Reference
+- [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+- [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/)
+- [Flask-Restful](https://flask-restful.readthedocs.io/en/latest/)
+- [Flask-Marshmallow](https://flask-marshmallow.readthedocs.io/en/latest/)
+- [Marshmallow](https://marshmallow.readthedocs.io/en/stable/)
+- [Marshmallow-SQLAlchemy](https://marshmallow-sqlalchemy.readthedocs.io/en/latest/)
+- [Flask-JWT](https://flask-jwt-extended.readthedocs.io/en/latest/)
+- [Tinify](https://tinypng.com/developers/reference/python)
+- [Diff, Match, Patch](https://github.com/google/diff-match-patch/wiki/API)

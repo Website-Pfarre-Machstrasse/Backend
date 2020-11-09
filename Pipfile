@@ -4,9 +4,21 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
 
 [packages]
+gunicorn = "*"
 flask = "*"
+flask-bcrypt = "*"
+flask-sqlalchemy = "*"
+flask-restful = "*"
+flask-cors = "*"
+flask-jwt-extended = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+marshmallow = "*"
+tinify = "*"
+diff-match-patch = "*"
 
 [requires]
 python_version = "3.8"
