@@ -8,6 +8,7 @@ __all__ = ['UUIDKeyMixin', 'UUIDType', 'TrackUpdateMixin', 'TrackCreationMixin']
 
 
 class UUIDType(db.TypeDecorator):
+
     impl = db.CHAR
 
     def load_dialect_impl(self, dialect):
@@ -47,6 +48,10 @@ class UUIDType(db.TypeDecorator):
             else:
                 # hexstring
                 return "%.32x" % value.int
+
+    @property
+    def python_type(self):
+        return uuid.UUID
 
 
 class UUIDKeyMixin:

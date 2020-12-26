@@ -1,10 +1,13 @@
 from .ref import db
 from .mixins import UUIDKeyMixin
 from ..bcrypt import bcrypt
+from ..schemas import ma
+from ..util import AuthenticationError
 
 
 class User(UUIDKeyMixin, db.Model):
     __tablename__ = 'user'
+    __table_opts__ = {'extend_existing': True}
 
     def __init__(self, /, first_name: str, last_name: str, email: str, password: str, role: str):
         self.first_name = first_name
@@ -32,9 +35,25 @@ class User(UUIDKeyMixin, db.Model):
         user: User = User.query.filter_by(email=username).first()
 
         if not user:
-            return 'User no found', False
+            raise AuthenticationError('User not found')
 
         if not user.check_password(password):
-            return 'Password incorrect', False
+            raise AuthenticationError('Password incorrect')
 
-        return user, True
+        return user
+
+
+class UserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'role', '_links')
+
+    id = ma.auto_field(column_name='_UUIDKeyMixin__id', dump_only=True)
+    password = ma.auto_field(column_name='_User__password', load_only=True, required=False)
+    _links = ma.Hyperlinks({
+        'self': ma.URLFor('user', values={'user_id': '<id>'}),
+        'collection': ma.URLFor('users')
+    })
+
+
+User.__marshmallow__ = UserSchema

@@ -1,4 +1,6 @@
 from functools import wraps
+
+from flask import Response
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
 from .exceptions import AuthorisationError
 from marshmallow import Schema
@@ -11,7 +13,7 @@ def admin_required(fn):
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
         claims = get_jwt_claims()
-        if claims['type'] != 'admin':
+        if claims['role'] != 'admin':
             raise AuthorisationError('Admins only!')
         else:
             return fn(*args, **kwargs)
@@ -32,14 +34,19 @@ def auto_marshall(fn):
             elif len(result) == 3:
                 (result, code, headers) = result
 
-        if code != 200:
-            return result, code, headers
+        if type(result) is Response:
+            return result
 
-        if hasattr(result, '__marshmallow__'):
-            schema = result.__marshmallow__
-            return schema.dump(result, many=type(result) is list), code, headers
-        else:
-            return result, code, headers
+        if 300 > code >= 200:
+            schema = None
+            if isinstance(result, list) and len(result) > 0 and hasattr(result[0], '__marshmallow__'):
+                schema = result[0].__marshmallow__(many=True)
+            elif hasattr(result, '__marshmallow__'):
+                schema = result.__marshmallow__(many=False)
+            if schema:
+                return schema.dump(result), code, headers
+        return result, code, headers
+
     return wrapper
 
 

@@ -3,16 +3,16 @@ import os
 from flask import Flask
 from sqlalchemy import event
 
-from .common.bcrypt import bcrypt
-from .common.cors import cors
-from .common.database import setup as setup_db
-from .common.database.ref import db
-from .common.doc import doc
-from .common.jwt.ref import jwt
-from .common.schemas.ref import ma
-from .common.tinify import tinify
-from .common.util import JSONEncoder, lazy_property
-from .resources.ref import api
+from common.bcrypt import bcrypt
+from common.cors import cors
+from common.database import setup as setup_db
+from common.database.ref import db
+from common.doc import doc
+from common.jwt.ref import jwt
+from common.schemas.ref import ma
+from common.tinify import tinify
+from common.util import JSONEncoder
+from resources.ref import api
 
 __all__ = ['create_app']
 
@@ -28,26 +28,23 @@ def create_app():
     # endregion setup config
     # region init extensions
     db.init_app(app)
-    api.init_app(app)
-    api.app = app
     cors.init_app(app, resources=app.config.get('CORS'))
     jwt.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
-    doc.init_app(app)
     tinify.init_app(app)
     # endregion init extensions
     # region setup DB
     setup_db(app)
-    event.listen(db.mapper, "after_configured", setup_schema)
+    # event.listen(db.mapper, "after_configured", setup_schema)
     # endregion setup DB
     # region register resources
-    from .common.util.register import register_resources
-    register_resources()
+    from common.util.register import register_resources
+    register_resources(api, doc, app)
     # endregion register resources
     # region cache app instance
     # noinspection PyProtectedMember
-    from .common.cache import init as init_app_store
+    from common.cache import init as init_app_store
     init_app_store(db.get_app)
     # endregion cache app instance
     # region add debug admin if debug
@@ -74,7 +71,7 @@ def setup_schema():
     for class_ in db.Model._decl_class_registry.values():
         if hasattr(class_, "__marshmallow__"):
             continue
-        if hasattr(class_, "__tablename__") and not hasattr(class_, '__no_marshmallow__'):
+        if hasattr(class_, "__tablename__") and not (hasattr(class_, '__no_marshmallow__') and getattr(class_, '__no_marshmallow__')):
             if class_.__name__.endswith("Schema"):
                 from marshmallow_sqlalchemy import ModelConversionError
                 raise ModelConversionError(
@@ -93,5 +90,4 @@ def setup_schema():
 
             schema_class = type(schema_class_name, (ma.SQLAlchemyAutoSchema,), {"Meta": meta_class})
 
-            setattr(class_, "__marshmallow__", schema_class())
-            setattr(class_, "__marshmallow_many__", schema_class(many=True))
+            setattr(class_, "__marshmallow__", schema_class)

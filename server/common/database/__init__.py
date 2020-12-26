@@ -1,7 +1,14 @@
 from .ref import db
 from .user import User
-from .media import PageMedia
-# from .gallery import Gallery, GalleryMedia
+from .category import Category
+from .page import Page
+from .change import Change
+from .media import Media
+from .gallery import Gallery
+from .event import Event
+
+Category.pages = db.relationship("Page")
+Page.content = db.relationship("Change")
 
 
 def setup(app):

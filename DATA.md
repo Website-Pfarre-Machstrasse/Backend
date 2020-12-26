@@ -27,7 +27,7 @@
 
 ## Change
 - Id(uuid)
-- Changes(json string)
+- Changes(json)
 - Timestamp(timestamp)
 - Page(reference [Page])
 - Author(reference [User])

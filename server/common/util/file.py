@@ -5,7 +5,7 @@ from ..database import db
 
 
 def get_save_path(media_type):
-    store_path = os.path.join(db.get_app().config.get("FILE_STORE", None))
+    store_path = os.path.abspath(os.path.normpath(db.get_app().config.get("FILE_STORE", None)))
     if not store_path:
         store_path = os.path.join(db.get_app().instance_path, 'files')
     path = os.path.join(store_path, media_type)

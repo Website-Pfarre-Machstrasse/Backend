@@ -1,44 +1,87 @@
-from flask import request
+from flask_apispec import marshal_with, use_kwargs, doc
 from flask_jwt_extended import jwt_required, get_current_user, jwt_refresh_token_required, get_jwt_identity, \
     create_access_token, create_refresh_token
+from marshmallow import fields
 
-from ..common.database import User as UserModel
-from ..common.rest import Resource
-from ..common.util import auto_marshall
+from common.schemas import ma
+from server.common.database.user import User as UserModel
+from server.common.rest import Resource
 
-__all__ = ['User', 'Login', 'Refresh']
+__all__ = ['Self', 'User', 'Users', 'Login', 'Refresh']
 
 
-class User(Resource):
-    method_decorators = [jwt_required, auto_marshall]
+class LoginSchema(ma.Schema):
+    username = fields.String()
+    password = fields.String()
 
-    @staticmethod
-    def get():
+
+class TokenSchema(ma.Schema):
+    access_token = fields.String()
+    refresh_token = fields.String()
+
+
+def auth_required(fn):
+    return doc()(fn)
+
+
+@doc(tags=['user'], params={
+    'Authorization': {
+        'description':
+            'Authorization HTTP header with JWT access token, like: Authorization: Bearer asdf.qwer.zxcv',
+        'in':
+            'header',
+        'type':
+            'string',
+        'required':
+            True
+    }
+})
+class Self(Resource):
+    method_decorators = [jwt_required]
+
+    @marshal_with(UserModel.__marshmallow__)
+    def get(self):
         return get_current_user()
 
 
+@doc(tags=['user'])
+class User(Resource):
+    method_decorators = [jwt_required]
+
+    @marshal_with(UserModel.__marshmallow__)
+    def get(self, user_id):
+        return UserModel.query.get_or_404(user_id)
+
+
+@doc(tags=['user'])
+class Users(Resource):
+    method_decorators = [jwt_required]
+
+    @marshal_with(UserModel.__marshmallow__(many=True))
+    def get(self):
+        return UserModel.query.all()
+
+
+@doc(tags=['user'])
 class Login(Resource):
-    @staticmethod
-    def post():
-        username = request.json.get('username', None)
-        password = request.json.get('password', None)
-        user, auth = UserModel.authenticate(username, password)
-        if auth:
-            ret = {
-                'access_token': create_access_token(identity=user.id),
-                'refresh_token': create_refresh_token(identity=user.id)
-            }
-            return ret, 200
-        return {'error': 401, 'message': user}, 401
+    @use_kwargs(LoginSchema)
+    @marshal_with(TokenSchema, code=200)
+    def post(self, **kwargs):
+        username = kwargs.get('username', None)
+        password = kwargs.get('password', None)
+        user = UserModel.authenticate(username, password)
+        return {
+           'access_token': create_access_token(identity=user),
+           'refresh_token': create_refresh_token(identity=user)
+        }, 200
 
 
+@doc(tags=['user'])
 class Refresh(Resource):
     method_decorators = [jwt_refresh_token_required]
 
-    @staticmethod
-    def post():
-        current_user = get_jwt_identity()
-        ret = {
-            'access_token': create_access_token(identity=current_user)
-        }
-        return ret, 200
+    @marshal_with(TokenSchema(only={'access_token'}), code=200)
+    def post(self):
+        return {
+           'access_token': create_access_token(identity=get_jwt_identity())
+        }, 200
