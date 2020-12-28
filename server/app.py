@@ -36,6 +36,7 @@ def create_app():
     cors.init_app(app, resources=app.config.get('CORS'))
     jwt.init_app(app)
     ma.init_app(app)
+    api.init_app(app)
     bcrypt.init_app(app)
     tinify.init_app(app)
     # endregion init extensions
@@ -45,7 +46,7 @@ def create_app():
     # endregion setup DB
     # region register resources
     from common.util.register import register_resources
-    register_resources(api, doc, app)
+    register_resources(api)
     # endregion register resources
     # region cache app instance
     # noinspection PyProtectedMember

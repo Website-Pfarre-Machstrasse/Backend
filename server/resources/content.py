@@ -1,13 +1,13 @@
-from flask import request, make_response
-from flask_apispec import marshal_with, use_kwargs, doc
-from flask_jwt_extended import jwt_required, get_current_user
 from diff_match_patch.diff_match_patch import diff_match_patch
+from flask import request, make_response
+from flask_jwt_extended import jwt_required, get_current_user
 
 from common.util import ServerError, RequestError
+from resources.ref import api
 from server.common.database import db
 from server.common.database.category import Category as CategoryModel
-from server.common.database.page import Page as PageModel
 from server.common.database.change import Change as ChangeModel
+from server.common.database.page import Page as PageModel
 from server.common.rest import Resource
 
 
@@ -22,17 +22,22 @@ class CacheDict(dict):
 content_cache = CacheDict()
 diff_maker = diff_match_patch()
 
+ns = api.get_ns('content')
+category_model = ns.model('Category', CategoryModel.__marshmallow__())
+category_partial_model = ns.model('Category(partial)', CategoryModel.__marshmallow__(partial=True))
+page_model = ns.model('Page', PageModel.__marshmallow__())
+page_partial_model = ns.model('Page(partial)', PageModel.__marshmallow__(partial=True))
 
-@doc(tags=['content'])
+
 class Categories(Resource):
     method_decorators = {'post': [jwt_required]}
 
-    @marshal_with(CategoryModel.__marshmallow__(many=True))
+    @ns.marshal_with(CategoryModel.__marshmallow__, code=200, as_list=True)
     def get(self):
         return CategoryModel.query.all()
 
-    @use_kwargs(CategoryModel.__marshmallow__)
-    @marshal_with(CategoryModel.__marshmallow__, code=201)
+    @ns.expect(CategoryModel.__marshmallow__)
+    @ns.marshal_with(category_model, code=201)
     def post(self, **kwargs):
         category = CategoryModel(**kwargs)
         try:
@@ -44,18 +49,18 @@ class Categories(Resource):
         return category, 201
 
 
-@doc(tags=['content'])
 class Category(Resource):
     method_decorators = {'delete': [jwt_required],
                          'put': [jwt_required],
                          'post': [jwt_required]}
 
-    @marshal_with(CategoryModel.__marshmallow__)
+    @ns.marshal_with(category_model, code=200)
     def get(self, category_id):
         return CategoryModel.query.get_or_404(category_id)
 
-    @use_kwargs(CategoryModel.__marshmallow__(partial=True))
-    @marshal_with(CategoryModel.__marshmallow__)
+    @ns.expect(category_partial_model)
+    @ns.marshal_with(category_model, code=200)
+    @ns.marshal_with(category_model, code=201)
     def put(self, category_id, **kwargs):
         category = CategoryModel.query.get(category_id)
         if not category:
@@ -77,7 +82,7 @@ class Category(Resource):
                 raise ServerError(e)
         return category
 
-    @marshal_with(None, code=204)
+    @ns.marshal_with(None, code=204)
     def delete(self, category_id):
         category = CategoryModel.query.get_or_404(category_id)
         try:
@@ -88,8 +93,8 @@ class Category(Resource):
             raise ServerError(e)
         return {}, 204
 
-    @use_kwargs(PageModel.__marshmallow__)
-    @marshal_with(PageModel.__marshmallow__, code=201)
+    @ns.expect(page_model)
+    @ns.marshal_with(page_model, code=201)
     def post(self, **kwargs):
         page = PageModel(**kwargs)
         try:
@@ -101,25 +106,24 @@ class Category(Resource):
         return page, 201
 
 
-@doc(tags=['content'])
 class Pages(Resource):
 
-    @marshal_with(PageModel.__marshmallow__(many=True))
+    @ns.marshal_with(page_model, code=200, as_list=True)
     def get(self, category_id):
         return CategoryModel.query.get_or_404(category_id).pages
 
 
-@doc(tags=['content'])
 class Page(Resource):
     method_decorators = {'delete': [jwt_required],
                          'put': [jwt_required]}
 
-    @marshal_with(PageModel.__marshmallow__)
+    @ns.marshal_with(page_model, code=200)
     def get(self, category_id, page_id):
         return PageModel.query.get_or_404((category_id, page_id))
 
-    @use_kwargs(PageModel.__marshmallow__(partial=True))
-    @marshal_with(PageModel.__marshmallow__)
+    @ns.expect(page_partial_model)
+    @ns.marshal_with(page_model, code=200)
+    @ns.marshal_with(page_model, code=201)
     def put(self, category_id, page_id, **kwargs):
         page = PageModel.query.get((category_id, page_id))
         if not page:
@@ -145,7 +149,7 @@ class Page(Resource):
                 raise ServerError(e)
         return page
 
-    @marshal_with(None, code=204)
+    @ns.marshal_with(None, code=204)
     def delete(self, category_id, page_id):
         page = PageModel.query.get_or_404((category_id, page_id))
         try:
@@ -157,10 +161,10 @@ class Page(Resource):
         return {}, 204
 
 
-@doc(tags=['content'])
 class PageContent(Resource):
     method_decorators = {'post': [jwt_required]}
 
+    @ns.produces('text/markdown')
     def get(self, category_id, page_id):
         page: PageModel = PageModel.query.get_or_404((category_id, page_id))
         if (category_id, page_id) not in content_cache:
@@ -173,6 +177,7 @@ class PageContent(Resource):
         resp.headers['Content-Type'] = 'text/markdown'
         return resp
 
+    @ns.marshal_with(None, code=201)
     def post(self, category_id, page_id):
         page: PageModel = PageModel.query.get_or_404((category_id, page_id))
         if (category_id, page_id) not in content_cache:

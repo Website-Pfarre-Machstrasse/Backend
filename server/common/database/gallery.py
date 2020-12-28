@@ -1,8 +1,8 @@
 from marshmallow import fields
 
 from .media import MediaSchema
-from .ref import db
 from .mixins import UUIDKeyMixin, UUIDType
+from .ref import db
 from ..schemas import ma
 
 gallery_media_relation = db.Table('gallery_media',
@@ -22,12 +22,11 @@ class GallerySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Gallery
         fields = ('id', 'title', 'author', 'media', '_links')
+        dump_only = ('id', 'author', 'media', '_links')
         include_relationships = True
         include_fk = True
 
-    id = ma.auto_field(column_name='_UUIDKeyMixin__id', dump_only=True)
-    author = ma.auto_field(dump_only=True)
-    media = fields.List(fields.Nested(MediaSchema))
+    media = fields.List(fields.Nested(MediaSchema, dump_only=True))
     _links = ma.Hyperlinks({
         'self': ma.URLFor('gallery', values={'gallery_id': '<id>'}),
         'collection': ma.URLFor('galleries')

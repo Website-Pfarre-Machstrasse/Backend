@@ -1,5 +1,5 @@
-from .ref import db
 from .mixins import UUIDKeyMixin, UUIDType
+from .ref import db
 from ..schemas import ma
 
 
@@ -20,10 +20,10 @@ class MediaSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Media
         fields = ('id', 'name', 'mimetype', 'extension', 'owner', '_links')
+        dump_only = ('id', 'owner', '_links')
         include_fk = True
 
-    id = ma.auto_field(column_name='_UUIDKeyMixin__id', dump_only=True)
-    owner = ma.auto_field(dump_only=True)
+    owner = ma.auto_field(column_name='owner_id', dump_only=True)
     _links = ma.Hyperlinks({
         'self': ma.URLFor('media', values={'media_id': '<id>'}),
         'collection': ma.URLFor('medias'),

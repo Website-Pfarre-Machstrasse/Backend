@@ -1,6 +1,7 @@
-from flask_restful import Resource as RestfulResource
 from flask_apispec.views import MethodResource
+from flask_restful import Resource as RestfulResource
 
 
 class Resource(MethodResource, RestfulResource):
-    pass
+    def __init__(self, api):
+        self.api = api

@@ -1,3 +1,3 @@
-from flask_apispec import FlaskApiSpec
+#from flask_apispec import FlaskApiSpec
 
-doc = FlaskApiSpec()
+#doc = FlaskApiSpec()

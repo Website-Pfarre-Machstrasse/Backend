@@ -1,23 +1,26 @@
-from datetime import datetime, date, timedelta
-from typing import Union
+from datetime import datetime
 
-from flask_apispec import marshal_with, use_kwargs
 from flask_jwt_extended import jwt_required, get_current_user
 from marshmallow import fields
 
 from common.database import db
 from common.rest import Resource
 from common.util import ServerError
+from resources.ref import api
 from server.common.database import Event as EventModel
+
+ns = api.get_ns('event')
+event_model = ns.model('Event', EventModel.__marshmallow__())
+event_partial_model = ns.model('Event(partial)', EventModel.__marshmallow__(partial=True))
 
 
 class Events(Resource):
     method_decorators = {'post': [jwt_required]}
 
-    @use_kwargs({'start': fields.DateTime(required=False),
-                 'end': fields.DateTime(required=False)}, location='query')
-    @marshal_with(EventModel.__marshmallow__(many=True))
-    def get(self, start: Union[datetime, None] = None, end: Union[datetime, None] = None):
+    @ns.expect({'start': fields.DateTime(required=False),
+                'end': fields.DateTime(required=False)}, location='query')
+    @ns.marshal_with(event_model, as_list=True)
+    def get(self, start: datetime = None, end: datetime = None):
         filters = []
         if not start:
             start = datetime.now()
@@ -32,8 +35,8 @@ class Events(Resource):
         filters.append(EventModel.end < end)
         return EventModel.query.filter(*filters).all()
 
-    @use_kwargs(EventModel.__marshmallow__)
-    @marshal_with(EventModel.__marshmallow__, code=201)
+    @ns.expect(event_model)
+    @ns.marshal_with(event_model, code=201)
     def post(self, **kwargs):
         event = EventModel(**kwargs)
         event.author = get_current_user().id
@@ -49,12 +52,12 @@ class Events(Resource):
 class Event(Resource):
     method_decorators = {'put': [jwt_required], 'delete': [jwt_required]}
 
-    @marshal_with(EventModel.__marshmallow__, code=200)
+    @ns.marshal_with(event_model, code=200)
     def get(self, event_id):
         return EventModel.query.get_or_404(event_id)
 
-    @use_kwargs(EventModel.__marshmallow__(partial=True))
-    @marshal_with(EventModel.__marshmallow__, code=200)
+    @ns.expect(event_partial_model)
+    @ns.marshal_with(event_model, code=200)
     def put(self, event_id, **kwargs):
         event = EventModel.query.get_or_404(event_id)
         try:
@@ -65,7 +68,7 @@ class Event(Resource):
             raise ServerError(e)
         return event
 
-    @marshal_with(None, code=204)
+    @ns.marshal_with(None, code=204)
     def delete(self, event_id):
         event = EventModel.query.get_or_404(event_id)
         try:

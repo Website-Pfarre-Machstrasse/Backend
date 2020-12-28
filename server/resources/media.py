@@ -1,33 +1,36 @@
 import os
 
 from flask import request, send_file
-from flask_apispec import marshal_with, doc
 from flask_jwt_extended import jwt_required, get_current_user
 from flask_restful import reqparse
 from werkzeug.datastructures import FileStorage
 
 from common.tinify import tinify
 from common.util import AuthorisationError, ServerError, RequestError
+from resources.ref import api
 from server.common.database import db
+from server.common.database.media import Media as MediaModel
 from server.common.rest import Resource
 from server.common.util.file import get_save_path
-from server.common.database.media import Media as MediaModel
 
 __all__ = ['Medias', 'Media', 'MediaData']
 
 parse = reqparse.RequestParser()
 parse.add_argument('file', type=FileStorage, location='files', required=True)
 
+ns = api.get_ns('media')
+media_model = ns.model('Media', MediaModel.__marshmallow__())
 
-@doc(tags=['media'])
+
 class Medias(Resource):
     method_decorators = {'post': [jwt_required]}
 
-    @marshal_with(MediaModel.__marshmallow__(many=True), code=200)
+    @ns.marshal_with(media_model, code=200, as_list=True)
     def get(self):
         return MediaModel.query.all()
 
-    @marshal_with(MediaModel.__marshmallow__, code=201)
+    @ns.expect(parse)
+    @ns.marshal_with(media_model, code=201)
     def post(self):
         args = parse.parse_args()
         file: FileStorage = args['file']
@@ -65,15 +68,14 @@ class Medias(Resource):
             raise ServerError(e)
 
 
-@doc(tags=['media'])
 class Media(Resource):
     method_decorators = {'delete': [jwt_required]}
 
-    @marshal_with(MediaModel.__marshmallow__, code=200)
+    @ns.marshal_with(media_model, code=200)
     def get(self, media_id):
         return MediaModel.query.get_or_404(media_id)
 
-    @marshal_with(None, code=204)
+    @ns.marshal_with(None, code=204)
     def delete(self, media_id):
         media = MediaModel.query.get_or_404(media_id)
         user = get_current_user()
@@ -88,7 +90,6 @@ class Media(Resource):
         return {}, 204
 
 
-@doc(tags=['media'])
 class MediaData(Resource):
 
     def get(self, media_id):

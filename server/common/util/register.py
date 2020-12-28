@@ -1,29 +1,58 @@
-from server.resources import *
 
 
-def register_resources(api, doc, app):
-    def register_resource(resource_class, *routes, endpoint):
-        api.add_resource(resource_class, *routes, endpoint=endpoint)
-        doc.register(resource_class, endpoint=endpoint)
-
-    register_resource(SelfResource, '/self', endpoint='self')
-    register_resource(UserResource, '/user', endpoint='users')
-    register_resource(UsersResource, '/user/<uuid:user_id>', endpoint='user')
-    register_resource(LoginResource, '/login', endpoint='login')
-    register_resource(RefreshResource, '/refresh', endpoint='refresh')
-    register_resource(GalleriesResource, '/galleries', endpoint='galleries')
-    register_resource(GalleryResource, '/galleries/<uuid:gallery_id>', endpoint='gallery')
-    register_resource(CategoriesResource, '/category', endpoint='categories')
-    register_resource(CategoryResource, '/category/<string:category_id>', endpoint='category')
-    register_resource(PagesResource, '/category/<string:category_id>/page', endpoint='pages')
-    register_resource(PageResource, '/category/<string:category_id>/page/<string:page_id>', endpoint='page')
-    register_resource(PageContentResource, '/category/<string:category_id>/page/<string:page_id>/content', endpoint='content')
-    register_resource(MediasResource, '/media', endpoint='medias')
-    register_resource(MediaResource, '/media/<uuid:media_id>', endpoint='media')
-    register_resource(MediaDataResource, '/media/<uuid:media_id>/file', endpoint='media_file')
-    register_resource(EventsResource, '/event', endpoint='events')
-    register_resource(EventResource, '/event/<uuid:event_id>', endpoint='event')
-
-    api.init_app(app)
-    api.app = app
-    doc.init_app(app)
+def register_resources(api):
+    # region namespaces
+    user_ns = api.namespace('user', path='/')
+    gallery_ns = api.namespace('gallery')
+    content_ns = api.namespace('content', path='/category')
+    media_ns = api.namespace('media')
+    event_ns = api.namespace('event')
+    # endregion
+    # region import
+    from server.resources import (
+        SelfResource,
+        LoginResource,
+        RefreshResource,
+        UserResource,
+        UsersResource,
+        GalleriesResource,
+        GalleryResource,
+        CategoriesResource,
+        CategoryResource,
+        PagesResource,
+        PageResource,
+        PageContentResource,
+        MediasResource,
+        MediaResource,
+        MediaDataResource,
+        EventsResource,
+        EventResource
+    )
+    # endregion
+    # region user
+    user_ns.add_resource(SelfResource, '/self', endpoint='self')
+    user_ns.add_resource(LoginResource, '/login', endpoint='login')
+    user_ns.add_resource(RefreshResource, '/refresh', endpoint='refresh')
+    user_ns.add_resource(UserResource, '/user', endpoint='users')
+    user_ns.add_resource(UsersResource, '/user/<uuid:user_id>', endpoint='user')
+    # endregion
+    # region gallery
+    gallery_ns.add_resource(GalleriesResource, '/', endpoint='galleries')
+    gallery_ns.add_resource(GalleryResource, '/<uuid:gallery_id>', endpoint='gallery')
+    # endregion
+    # region content
+    content_ns.add_resource(CategoriesResource, '/', endpoint='categories')
+    content_ns.add_resource(CategoryResource, '/<string:category_id>', endpoint='category')
+    content_ns.add_resource(PagesResource, '/<string:category_id>/page', endpoint='pages')
+    content_ns.add_resource(PageResource, '/<string:category_id>/page/<string:page_id>', endpoint='page')
+    content_ns.add_resource(PageContentResource, '/<string:category_id>/page/<string:page_id>/content', endpoint='content')
+    # endregion
+    # region media
+    media_ns.add_resource(MediasResource, '/', endpoint='medias')
+    media_ns.add_resource(MediaResource, '/<uuid:media_id>', endpoint='media')
+    media_ns.add_resource(MediaDataResource, '/media/<uuid:media_id>/file', endpoint='media_file')
+    # endregion
+    # region event
+    event_ns.add_resource(EventsResource, '/', endpoint='events')
+    event_ns.add_resource(EventResource, '/<uuid:event_id>', endpoint='event')
+    # endregion
