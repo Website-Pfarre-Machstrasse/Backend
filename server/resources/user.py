@@ -11,8 +11,8 @@ __all__ = ['Self', 'User', 'Users', 'Login', 'Refresh']
 
 
 class LoginSchema(ma.Schema):
-    username = fields.String()
-    password = fields.String()
+    username = fields.String(required=True)
+    password = fields.String(required=True)
 
 
 class TokenSchema(ma.Schema):

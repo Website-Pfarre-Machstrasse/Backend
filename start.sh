@@ -1,3 +1,2 @@
 #!/bin/bash
-
-pipenv run gunicorn 'server:create_app()'
+exec gunicorn --config /server/gunicorn_config.py 'server:create_app()'

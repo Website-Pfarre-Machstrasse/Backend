@@ -1,13 +1,11 @@
 import os
 
 from flask import Flask
-from sqlalchemy import event
 
 from common.bcrypt import bcrypt
 from common.cors import cors
 from common.database import setup as setup_db
 from common.database.ref import db
-from common.doc import doc
 from common.jwt.ref import jwt
 from common.schemas.ref import ma
 from common.tinify import tinify
@@ -22,7 +20,14 @@ def create_app():
     app = Flask(__name__, static_folder=None)
     # endregion create app
     # region setup config
-    app.config.from_json(os.environ.get('APP_CONFIG', 'settings-dev.json'))
+    config_file = os.environ.get('APP_CONFIG')
+
+    if not config_file or os.path.isfile(config_file):
+        if os.environ.get('FLASK_DEBUG') == '1':
+            config_file = 'settings-dev.json'
+        else:
+            raise ValueError('No config file provided')
+    app.config.from_json(config_file)
     app.config.setdefault('RESTFUL_JSON', {})
     app.config.get('RESTFUL_JSON').setdefault('cls', JSONEncoder)
     # endregion setup config

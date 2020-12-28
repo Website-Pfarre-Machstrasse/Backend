@@ -1,5 +1,2 @@
-/Pipfile.lock
 /server/*.db
 /server/settings*.json
-/dist/
-/build/
