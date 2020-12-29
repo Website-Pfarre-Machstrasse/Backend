@@ -1,5 +1,4 @@
 from .ref import db
-from ..schemas import ma
 
 
 class Page(db.Model):
@@ -9,18 +8,10 @@ class Page(db.Model):
     id = db.Column(db.String(20), nullable=False, primary_key=True)
     order = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(63), nullable=False)
+    content = db.relationship("Change")
 
-
-class PageSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        model = Page
-        fields = ('category', 'id', 'title', 'order', '_links')
-
-    _links = ma.Hyperlinks({
-        'self': ma.URLFor('page', values={'category_id': '<category>', 'page_id': '<id>'}),
-        'collection': ma.URLFor('pages', values={'category_id': '<category>'}),
-        'content': ma.URLFor('content', values={'category_id': '<category>', 'page_id': '<id>'})
-    })
-
-
-Page.__marshmallow__ = PageSchema
+    @property
+    def last_update(self):
+        if not self.content:
+            return None
+        return self.content[-1].created_at

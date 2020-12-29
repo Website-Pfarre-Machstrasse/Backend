@@ -1,7 +1,15 @@
+from flask import Flask
+
 from server.resources import *
 
+registered = False
 
-def register_resources(api, doc, app):
+
+def register_resources(api, doc, app: Flask):
+    global registered
+    if registered:
+        return
+
     def register_resource(resource_class, *routes, endpoint):
         api.add_resource(resource_class, *routes, endpoint=endpoint)
         doc.register(resource_class, endpoint=endpoint)
@@ -26,4 +34,7 @@ def register_resources(api, doc, app):
 
     api.init_app(app)
     api.app = app
+    app.extensions['restful'] = api
     doc.init_app(app)
+
+    registered = True
