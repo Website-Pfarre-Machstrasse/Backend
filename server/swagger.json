@@ -363,6 +363,13 @@
                 ],
                 "type": "object"
             }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "bearerFormat": "JWT",
+                "scheme": "bearer",
+                "type": "http"
+            }
         }
     },
     "info": {
@@ -452,6 +459,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "content"
                 ]
@@ -480,6 +492,11 @@
                         "description": ""
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "content"
                 ]
@@ -586,6 +603,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "content"
                 ]
@@ -669,6 +691,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "content"
                 ]
@@ -733,18 +760,18 @@
             "delete": {
                 "parameters": [
                     {
-                        "description": "The id of the category",
+                        "description": "The id of the page",
                         "in": "path",
-                        "name": "category_id",
+                        "name": "page_id",
                         "required": true,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "The id of the page",
+                        "description": "The id of the category",
                         "in": "path",
-                        "name": "page_id",
+                        "name": "category_id",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -761,6 +788,11 @@
                         "description": ""
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "content"
                 ]
@@ -768,18 +800,18 @@
             "get": {
                 "parameters": [
                     {
-                        "description": "The id of the category",
+                        "description": "The id of the page",
                         "in": "path",
-                        "name": "category_id",
+                        "name": "page_id",
                         "required": true,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "The id of the page",
+                        "description": "The id of the category",
                         "in": "path",
-                        "name": "page_id",
+                        "name": "category_id",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -827,18 +859,18 @@
             "put": {
                 "parameters": [
                     {
-                        "description": "The id of the category",
+                        "description": "The id of the page",
                         "in": "path",
-                        "name": "category_id",
+                        "name": "page_id",
                         "required": true,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "The id of the page",
+                        "description": "The id of the category",
                         "in": "path",
-                        "name": "page_id",
+                        "name": "category_id",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -922,6 +954,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "content"
                 ]
@@ -931,18 +968,18 @@
             "get": {
                 "parameters": [
                     {
-                        "description": "The id of the category",
+                        "description": "The id of the page",
                         "in": "path",
-                        "name": "category_id",
+                        "name": "page_id",
                         "required": true,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "The id of the page",
+                        "description": "The id of the category",
                         "in": "path",
-                        "name": "page_id",
+                        "name": "category_id",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -969,18 +1006,18 @@
             "post": {
                 "parameters": [
                     {
-                        "description": "The id of the category",
+                        "description": "The id of the page",
                         "in": "path",
-                        "name": "category_id",
+                        "name": "page_id",
                         "required": true,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "description": "The id of the page",
+                        "description": "The id of the category",
                         "in": "path",
-                        "name": "page_id",
+                        "name": "category_id",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1000,6 +1037,11 @@
                         "description": ""
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "content"
                 ]
@@ -1093,6 +1135,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "event"
                 ]
@@ -1120,6 +1167,11 @@
                         "description": ""
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "event"
                 ]
@@ -1207,6 +1259,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "event"
                 ]
@@ -1284,6 +1341,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "gallery"
                 ]
@@ -1311,6 +1373,11 @@
                         "description": ""
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "gallery"
                 ]
@@ -1398,6 +1465,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "gallery"
                 ]
@@ -1468,6 +1540,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "gallery"
                 ]
@@ -1588,6 +1665,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "media"
                 ]
@@ -1615,6 +1697,11 @@
                         "description": ""
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "media"
                 ]
@@ -1759,6 +1846,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "user"
                 ]
@@ -1790,6 +1882,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "user"
                 ]
@@ -1833,6 +1930,11 @@
                         }
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": [
                     "user"
                 ]

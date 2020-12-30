@@ -1,9 +1,8 @@
-from flask_apispec import use_kwargs
-from flask_jwt_extended import jwt_required, get_current_user, jwt_refresh_token_required, get_jwt_identity, \
+from flask_jwt_extended import get_current_user, jwt_refresh_token_required, get_jwt_identity, \
     create_access_token, create_refresh_token
 
 from common.schema import UserSchema, LoginSchema, TokenSchema
-from common.util.decorators import tag, marshal_with
+from common.util.decorators import tag, marshal_with, use_kwargs, jwt_required
 from server.common.database.user import User as UserModel
 from server.common.rest import Resource
 
@@ -12,8 +11,7 @@ __all__ = ['Self', 'User', 'Users', 'Login', 'Refresh']
 
 @tag('user')
 class Self(Resource):
-    method_decorators = [jwt_required]
-
+    @jwt_required
     @marshal_with(UserSchema)
     def get(self):
         return get_current_user()
@@ -21,8 +19,7 @@ class Self(Resource):
 
 @tag('user')
 class User(Resource):
-    method_decorators = [jwt_required]
-
+    @jwt_required
     @marshal_with(UserSchema)
     def get(self, user_id):
         return UserModel.query.get_or_404(user_id)
@@ -30,8 +27,7 @@ class User(Resource):
 
 @tag('user')
 class Users(Resource):
-    method_decorators = [jwt_required]
-
+    @jwt_required
     @marshal_with(UserSchema(many=True))
     def get(self):
         return UserModel.query.all()

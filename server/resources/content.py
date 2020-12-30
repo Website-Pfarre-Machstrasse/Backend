@@ -1,6 +1,6 @@
 from diff_match_patch.diff_match_patch import diff_match_patch
 from flask import request
-from flask_jwt_extended import jwt_required, get_current_user
+from flask_jwt_extended import get_current_user
 
 from server.common.database import db
 from server.common.database.category import Category as CategoryModel
@@ -8,7 +8,7 @@ from server.common.database.change import Change as ChangeModel
 from server.common.database.page import Page as PageModel
 from server.common.rest import Resource
 from server.common.schema import CategorySchema, PageSchema
-from server.common.util import ServerError, RequestError, params, tag, marshal_with, use_kwargs, CacheDict
+from server.common.util import ServerError, RequestError, params, tag, marshal_with, use_kwargs, CacheDict, jwt_required
 
 
 def cache_content(page: PageModel):
@@ -31,12 +31,12 @@ diff_maker = diff_match_patch()
 
 @tag('content')
 class Categories(Resource):
-    method_decorators = {'post': [jwt_required]}
 
     @marshal_with(CategorySchema(many=True), code=200)
     def get(self):
         return CategoryModel.query.all()
 
+    @jwt_required
     @use_kwargs(CategorySchema, required=True)
     @marshal_with(CategorySchema, code=201)
     def post(self, **kwargs):
@@ -53,14 +53,12 @@ class Categories(Resource):
 @tag('content')
 @params(category_id='The id of the category')
 class Category(Resource):
-    method_decorators = {'delete': [jwt_required],
-                         'put': [jwt_required],
-                         'post': [jwt_required]}
 
     @marshal_with(CategorySchema, code=200)
     def get(self, category_id):
         return CategoryModel.query.get_or_404(category_id)
 
+    @jwt_required
     @use_kwargs(CategorySchema(partial=True))
     @marshal_with(CategorySchema, code=200)
     @marshal_with(CategorySchema, code=201)
@@ -85,6 +83,7 @@ class Category(Resource):
                 raise ServerError(e)
         return category
 
+    @jwt_required
     @marshal_with(None, code=204)
     def delete(self, category_id):
         category = CategoryModel.query.get_or_404(category_id)
@@ -96,6 +95,7 @@ class Category(Resource):
             raise ServerError(e)
         return {}, 204
 
+    @jwt_required
     @use_kwargs(PageSchema, required=True)
     @marshal_with(PageSchema, code=201)
     def post(self, **kwargs):
@@ -121,13 +121,12 @@ class Pages(Resource):
 @tag('content')
 @params(category_id='The id of the category', page_id='The id of the page')
 class Page(Resource):
-    method_decorators = {'delete': [jwt_required],
-                         'put': [jwt_required]}
 
     @marshal_with(PageSchema, code=200)
     def get(self, category_id, page_id):
         return PageModel.query.get_or_404((category_id, page_id))
 
+    @jwt_required
     @use_kwargs(PageSchema(partial=True), required=True)
     @marshal_with(PageSchema, code=200)
     @marshal_with(PageSchema, code=201)
@@ -156,6 +155,7 @@ class Page(Resource):
                 raise ServerError(e)
         return page
 
+    @jwt_required
     @marshal_with(None, code=204)
     def delete(self, category_id, page_id):
         page = PageModel.query.get_or_404((category_id, page_id))
@@ -171,7 +171,6 @@ class Page(Resource):
 @tag('content')
 @params(category_id='The id of the category', page_id='The id of the page')
 class PageContent(Resource):
-    method_decorators = {'post': [jwt_required]}
 
     @marshal_with({'type': 'string', 'format': 'markdown'}, code=200, content_type='text/markdown', apply=False)
     def get(self, category_id, page_id):
@@ -184,6 +183,7 @@ class PageContent(Resource):
             content_cache.cache(key, page)
         return content_cache.get(key, '')
 
+    @jwt_required
     @marshal_with({'type': 'string', 'format': 'markdown'}, code=201, content_type='text/markdown', apply=False)
     def post(self, category_id, page_id):
         key = (category_id, page_id)

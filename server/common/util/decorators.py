@@ -6,12 +6,12 @@ from flask_apispec import doc, use_kwargs, utils
 from flask_apispec.annotations import annotate
 from flask_apispec.wrapper import Wrapper as OriginalWrapper, identity, MARSHMALLOW_VERSION_INFO
 from flask_apispec.wrapper import unpack, packed
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims, jwt_required as _jwt_required
 
 from .exceptions import AuthorisationError
 
 __all__ = ['admin_required', 'lazy_property', 'autodoc', 'write_only_property', 'tag', 'produces', 'params',
-           'marshal_with', 'use_kwargs', 'transactional']
+           'marshal_with', 'use_kwargs', 'transactional', 'jwt_required']
 
 
 def transactional(session):
@@ -72,6 +72,14 @@ def autodoc(fn):
     if fn.__doc__:
         return doc(description=fn.__doc__)(fn)
     return fn
+
+
+def jwt_required(fn):
+    return auth_required('bearerAuth')(_jwt_required(fn))
+
+
+def auth_required(security):
+    return doc(security=[{security: []}])
 
 
 def marshal_with(schema, code='default', description='', content_type=None, inherit=None, apply=None):

@@ -1,14 +1,14 @@
 import os
 
 from flask import request, send_file
-from flask_jwt_extended import jwt_required, get_current_user
+from flask_jwt_extended import get_current_user
 from flask_restful import reqparse
 from werkzeug.datastructures import FileStorage
 
 from common.schema import MediaSchema
 from common.tinify import tinify
 from common.util import AuthorisationError, ServerError, RequestError
-from common.util.decorators import tag, marshal_with
+from common.util.decorators import tag, marshal_with, jwt_required
 from server.common.database import db
 from server.common.database.media import Media as MediaModel
 from server.common.rest import Resource
@@ -22,12 +22,12 @@ parse.add_argument('file', type=FileStorage, location='files', required=True)
 
 @tag('media')
 class Medias(Resource):
-    method_decorators = {'post': [jwt_required]}
 
     @marshal_with(MediaSchema(many=True), code=200)
     def get(self):
         return MediaModel.query.all()
 
+    @jwt_required
     @marshal_with(MediaSchema, code=201)
     def post(self):
         args = parse.parse_args()
@@ -68,12 +68,12 @@ class Medias(Resource):
 
 @tag('media')
 class Media(Resource):
-    method_decorators = {'delete': [jwt_required]}
 
     @marshal_with(MediaSchema, code=200)
     def get(self, media_id):
         return MediaModel.query.get_or_404(media_id)
 
+    @jwt_required
     @marshal_with(None, code=204)
     def delete(self, media_id):
         media = MediaModel.query.get_or_404(media_id)

@@ -2,20 +2,19 @@ from datetime import datetime
 from typing import Union
 
 from flask_apispec import use_kwargs
-from flask_jwt_extended import jwt_required, get_current_user
+from flask_jwt_extended import get_current_user
 from marshmallow import fields
 
 from common.database import db
 from common.rest import Resource
 from common.schema import EventSchema
 from common.util import ServerError
-from common.util.decorators import tag, marshal_with
+from common.util.decorators import tag, marshal_with, jwt_required
 from server.common.database import Event as EventModel
 
 
 @tag('event')
 class Events(Resource):
-    method_decorators = {'post': [jwt_required]}
 
     @use_kwargs({'start': fields.DateTime(required=False),
                  'end': fields.DateTime(required=False)}, location='query')
@@ -35,6 +34,7 @@ class Events(Resource):
         filters.append(EventModel.end < end)
         return EventModel.query.filter(*filters).all()
 
+    @jwt_required
     @use_kwargs(EventSchema)
     @marshal_with(EventSchema, code=201)
     def post(self, **kwargs):
@@ -51,12 +51,12 @@ class Events(Resource):
 
 @tag('event')
 class Event(Resource):
-    method_decorators = {'put': [jwt_required], 'delete': [jwt_required]}
 
     @marshal_with(EventSchema, code=200)
     def get(self, event_id):
         return EventModel.query.get_or_404(event_id)
 
+    @jwt_required
     @use_kwargs(EventSchema(partial=True))
     @marshal_with(EventSchema, code=200)
     def put(self, event_id, **kwargs):
@@ -69,6 +69,7 @@ class Event(Resource):
             raise ServerError(e)
         return event
 
+    @jwt_required
     @marshal_with(None, code=204)
     def delete(self, event_id):
         event = EventModel.query.get_or_404(event_id)

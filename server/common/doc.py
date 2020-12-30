@@ -160,7 +160,8 @@ class FlaskApiSpec(Base):
                     make_apispec(self.app.config.get('APISPEC_TITLE', 'flask-apispec'),
                                  self.app.config.get('APISPEC_VERSION', 'v1'),
                                  self.app.config.get('APISPEC_OAS_VERSION', '2.0'),
-                                 self.app.config.get('APISPEC_PLUGINS', plugins))
+                                 self.app.config.get('APISPEC_PLUGINS', plugins),
+                                 )
         self.add_swagger_routes()
         self.resource_converter = ResourceConverter(self.app, self.spec, self.document_options)
         self.view_converter = ViewConverter(self.app, self.spec, self.document_options)
@@ -177,7 +178,7 @@ class FlaskApiSpec(Base):
         return self.handlers[mime_type]()
 
 
-def make_apispec(title='flask-apispec', version='v1', openapi_version='2.0', plugins=None):
+def make_apispec(title='flask-apispec', version='v1', openapi_version='2.0', plugins=None, **options):
     if plugins is None:
         plugins = [MarshmallowPlugin()]
     return APISpec(
@@ -185,6 +186,15 @@ def make_apispec(title='flask-apispec', version='v1', openapi_version='2.0', plu
         version=version,
         openapi_version=openapi_version,
         plugins=plugins,
+        components={
+            'securitySchemes': {
+                'bearerAuth': {
+                    'type': 'http',
+                    'scheme': 'bearer',
+                    'bearerFormat': 'JWT'
+                }
+            }
+        }
     )
 
 

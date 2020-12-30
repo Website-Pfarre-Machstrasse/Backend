@@ -1,10 +1,9 @@
 from flask_apispec import use_kwargs
-from flask_jwt_extended import jwt_required
 from marshmallow import fields
 
 from common.schema import GallerySchema
 from common.util import RequestError
-from common.util.decorators import tag, marshal_with, transactional
+from common.util.decorators import tag, marshal_with, transactional, jwt_required
 from server.common.database import db
 from server.common.database.gallery import Gallery as GalleryModel
 from server.common.database.media import Media as MediaModel
@@ -15,19 +14,30 @@ __all__ = ['Galleries', 'Gallery']
 
 @tag('gallery')
 class Galleries(BasicCollectionResource):
-    method_decorators = {'post': [jwt_required]}
     schema = GallerySchema
     model = GalleryModel
     db_session = db.session
+
+    @jwt_required
+    def post(self, *args, **kwargs):
+        super(Galleries, self).post(*args, **kwargs)
 
 
 @tag('gallery')
 class Gallery(BasicResource):
-    method_decorators = {'post': [jwt_required], 'put': [jwt_required]}
     schema = GallerySchema
     model = GalleryModel
     db_session = db.session
 
+    @jwt_required
+    def put(self, *args, _transaction, **kwargs):
+        super(Gallery, self).put(*args, _transaction, **kwargs)
+
+    @jwt_required
+    def delete(self, *args, _transaction):
+        super(Gallery, self).delete(*args, _transaction)
+
+    @jwt_required
     @use_kwargs({'media_id': fields.UUID(required=True)})
     @marshal_with(GallerySchema, code=201)
     @transactional(db_session)
