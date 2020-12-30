@@ -1,0 +1,1842 @@
+{
+    "components": {
+        "schemas": {
+            "Category": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "id": {
+                        "maxLength": 20,
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "maxLength": 127,
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "order",
+                    "title"
+                ],
+                "type": "object"
+            },
+            "Category1": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "id": {
+                        "maxLength": 20,
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "maxLength": 127,
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Event": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "author": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "details": {
+                        "maxLength": 255,
+                        "type": "string"
+                    },
+                    "end": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "id": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "name": {
+                        "maxLength": 127,
+                        "type": "string"
+                    },
+                    "start": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "author",
+                    "details",
+                    "end",
+                    "name",
+                    "start"
+                ],
+                "type": "object"
+            },
+            "Event1": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "author": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "details": {
+                        "maxLength": 255,
+                        "type": "string"
+                    },
+                    "end": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "id": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "name": {
+                        "maxLength": 127,
+                        "type": "string"
+                    },
+                    "start": {
+                        "format": "date-time",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Gallery": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "author": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "id": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "media": {
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        },
+                        "readOnly": true,
+                        "type": "array"
+                    },
+                    "title": {
+                        "maxLength": 63,
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "title"
+                ],
+                "type": "object"
+            },
+            "Gallery1": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "author": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "id": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "media": {
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        },
+                        "readOnly": true,
+                        "type": "array"
+                    },
+                    "title": {
+                        "maxLength": 63,
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Generated": {
+                "properties": {
+                    "media_id": {
+                        "format": "uuid",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "media_id"
+                ],
+                "type": "object"
+            },
+            "Login": {
+                "properties": {
+                    "password": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "password",
+                    "username"
+                ],
+                "type": "object"
+            },
+            "Media": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "extension": {
+                        "maxLength": 15,
+                        "type": "string"
+                    },
+                    "id": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "mimetype": {
+                        "maxLength": 127,
+                        "type": "string"
+                    },
+                    "name": {
+                        "maxLength": 127,
+                        "type": "string"
+                    },
+                    "owner": {
+                        "readOnly": true
+                    }
+                },
+                "required": [
+                    "extension",
+                    "mimetype",
+                    "name"
+                ],
+                "type": "object"
+            },
+            "Page": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "category": {
+                        "maxLength": 20,
+                        "type": "string"
+                    },
+                    "id": {
+                        "maxLength": 20,
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "maxLength": 63,
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "category",
+                    "id",
+                    "order",
+                    "title"
+                ],
+                "type": "object"
+            },
+            "Page1": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "category": {
+                        "maxLength": 20,
+                        "type": "string"
+                    },
+                    "id": {
+                        "maxLength": 20,
+                        "type": "string"
+                    },
+                    "order": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "maxLength": 63,
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Token": {
+                "properties": {
+                    "access_token": {
+                        "type": "string"
+                    },
+                    "refresh_token": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Token1": {
+                "properties": {
+                    "access_token": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "email": {
+                        "maxLength": 127,
+                        "type": "string"
+                    },
+                    "first_name": {
+                        "maxLength": 63,
+                        "type": "string"
+                    },
+                    "id": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "maxLength": 63,
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true
+                    },
+                    "role": {
+                        "enum": [
+                            "admin",
+                            "author"
+                        ],
+                        "maxLength": 6,
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "first_name",
+                    "last_name"
+                ],
+                "type": "object"
+            }
+        }
+    },
+    "info": {
+        "title": "Website Pfarre Machstrasse - API",
+        "version": "v1"
+    },
+    "openapi": "3.0.0",
+    "paths": {
+        "/api/category": {
+            "get": {
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category/get"
+                            },
+                            "pages": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            },
+            "post": {
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category/get"
+                            },
+                            "pages": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            }
+        },
+        "/api/category/{category_id}": {
+            "delete": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            },
+            "get": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category/get"
+                            },
+                            "pages": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Page"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Page"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category"
+                                }
+                            },
+                            "content": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}~1content/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category1"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category/get"
+                            },
+                            "pages": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category/get"
+                            },
+                            "pages": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            }
+        },
+        "/api/category/{category_id}/page": {
+            "get": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Page"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category"
+                                }
+                            },
+                            "content": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}~1content/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            }
+        },
+        "/api/category/{category_id}/page/{page_id}": {
+            "delete": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "The id of the page",
+                        "in": "path",
+                        "name": "page_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            },
+            "get": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "The id of the page",
+                        "in": "path",
+                        "name": "page_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Page"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category"
+                                }
+                            },
+                            "content": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}~1content/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "The id of the page",
+                        "in": "path",
+                        "name": "page_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Page1"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Page"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category"
+                                }
+                            },
+                            "content": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}~1content/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Page"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category"
+                                }
+                            },
+                            "content": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}~1content/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1category~1{category_id}~1page~1{page_id}/get",
+                                "parameters": {
+                                    "category_id": "$response.body#/category",
+                                    "page_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            }
+        },
+        "/api/category/{category_id}/page/{page_id}/content": {
+            "get": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "The id of the page",
+                        "in": "path",
+                        "name": "page_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "text/markdown": {
+                                "schema": {
+                                    "format": "markdown",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "description": "The id of the category",
+                        "in": "path",
+                        "name": "category_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "The id of the page",
+                        "in": "path",
+                        "name": "page_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "text/markdown": {
+                                "schema": {
+                                    "format": "markdown",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "content"
+                ]
+            }
+        },
+        "/api/event": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "start",
+                        "required": false,
+                        "schema": {
+                            "format": "date-time",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "end",
+                        "required": false,
+                        "schema": {
+                            "format": "date-time",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Event"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1event~1{event_id}/get",
+                                "parameters": {
+                                    "event_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "event"
+                ]
+            },
+            "post": {
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Event"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Event"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1event~1{event_id}/get",
+                                "parameters": {
+                                    "event_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "event"
+                ]
+            }
+        },
+        "/api/event/{event_id}": {
+            "delete": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "event_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "event"
+                ]
+            },
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "event_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Event"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1event~1{event_id}/get",
+                                "parameters": {
+                                    "event_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "event"
+                ]
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "event_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Event1"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Event"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1event~1{event_id}/get",
+                                "parameters": {
+                                    "event_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "event"
+                ]
+            }
+        },
+        "/api/galleries": {
+            "get": {
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Gallery"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1galleries/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
+                                "parameters": {
+                                    "gallery_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "gallery"
+                ]
+            },
+            "post": {
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Gallery"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Gallery"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1galleries/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
+                                "parameters": {
+                                    "gallery_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "gallery"
+                ]
+            }
+        },
+        "/api/galleries/{gallery_id}": {
+            "delete": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "gallery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "gallery"
+                ]
+            },
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "gallery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Gallery"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1galleries/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
+                                "parameters": {
+                                    "gallery_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "gallery"
+                ]
+            },
+            "post": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "gallery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Generated"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Gallery"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1galleries/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
+                                "parameters": {
+                                    "gallery_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "gallery"
+                ]
+            },
+            "put": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "gallery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Gallery1"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Gallery"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1galleries/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
+                                "parameters": {
+                                    "gallery_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Gallery"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1galleries/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
+                                "parameters": {
+                                    "gallery_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "gallery"
+                ]
+            }
+        },
+        "/api/login": {
+            "post": {
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Login"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/api/media": {
+            "get": {
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Media"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1media/get"
+                            },
+                            "image": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
+                            "thumbnail": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id",
+                                    "thumb": "$response.body#/"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "media"
+                ]
+            },
+            "post": {
+                "parameters": [],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Media"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1media/get"
+                            },
+                            "image": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
+                            "thumbnail": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id",
+                                    "thumb": "$response.body#/"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "media"
+                ]
+            }
+        },
+        "/api/media/{media_id}": {
+            "delete": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "media_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "media"
+                ]
+            },
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "media_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Media"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1media/get"
+                            },
+                            "image": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
+                            "thumbnail": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id",
+                                    "thumb": "$response.body#/"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "media"
+                ]
+            }
+        },
+        "/api/media/{media_id}/file": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "media_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "audio/*": {
+                                "schema": {
+                                    "format": "binary",
+                                    "type": "string"
+                                }
+                            },
+                            "image/*": {
+                                "schema": {
+                                    "format": "binary",
+                                    "type": "string"
+                                }
+                            },
+                            "video/*": {
+                                "schema": {
+                                    "format": "binary",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "media"
+                ]
+            }
+        },
+        "/api/refresh": {
+            "post": {
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Token1"
+                                }
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/api/self": {
+            "get": {
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1user/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "user_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/api/user": {
+            "get": {
+                "parameters": [],
+                "responses": {
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1user/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "user_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/api/user/{user_id}": {
+            "get": {
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "user_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1user/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "user_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            }
+        }
+    }
+}
