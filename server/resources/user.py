@@ -1,40 +1,13 @@
-from flask_apispec import use_kwargs, doc
+from flask_apispec import use_kwargs
 from flask_jwt_extended import jwt_required, get_current_user, jwt_refresh_token_required, get_jwt_identity, \
     create_access_token, create_refresh_token
-from marshmallow import fields
 
-from common.schema import ma, UserSchema
+from common.schema import UserSchema, LoginSchema, TokenSchema
 from common.util.decorators import tag, marshal_with
 from server.common.database.user import User as UserModel
 from server.common.rest import Resource
 
 __all__ = ['Self', 'User', 'Users', 'Login', 'Refresh']
-
-
-# TODO move
-class LoginSchema(ma.Schema):
-    username = fields.String(required=True)
-    password = fields.String(required=True)
-
-
-class TokenSchema(ma.Schema):
-    access_token = fields.String()
-    refresh_token = fields.String()
-
-
-def auth_required(fn):
-    return doc(params={
-        'Authorization': {
-            'description':
-                'Authorization HTTP header with JWT access token, like: Authorization: Bearer asdf.qwer.zxcv',
-            'in':
-                'header',
-            'type':
-                'string',
-            'required':
-                True
-        }
-    })(fn)
 
 
 @tag('user')

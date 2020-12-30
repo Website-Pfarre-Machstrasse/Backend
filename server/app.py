@@ -7,7 +7,7 @@ from common.database import setup as setup_db
 from common.database.ref import db
 from common.doc import doc
 from common.jwt.ref import jwt
-from common.schema import ma
+from common.schema.ref import ma, marshmallow_plugin
 from common.tinify import tinify
 from config import setup_config
 from resources.ref import api
@@ -30,7 +30,7 @@ def create_app():
     init_extensions(app)
     setup_db(app)
     from common.util.register import register_resources
-    register_resources(api, doc, app)
+    register_resources(api, doc, app, marshmallow_plugin)
 
     if app.debug:
         with app.app_context():

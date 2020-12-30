@@ -5,7 +5,7 @@ from server.resources import *
 registered = False
 
 
-def register_resources(api, doc, app: Flask):
+def register_resources(api, doc, app: Flask, marshmallow_plugin):
     global registered
     if registered:
         return
@@ -35,6 +35,13 @@ def register_resources(api, doc, app: Flask):
     api.init_app(app)
     api.app = app
     app.extensions['restful'] = api
-    doc.init_app(app)
+
+    def hook():
+        from common.schema.ref import enum2properties, hyperlinks2properties, urlfor2properties
+        marshmallow_plugin.converter.add_attribute_function(enum2properties)
+        marshmallow_plugin.converter.add_attribute_function(hyperlinks2properties)
+        marshmallow_plugin.converter.add_attribute_function(urlfor2properties)
+
+    doc.init_app(app, plugins=[marshmallow_plugin], hook=hook)
 
     registered = True

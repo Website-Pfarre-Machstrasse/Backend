@@ -1,3 +1,5 @@
+from marshmallow import fields
+
 from common.database import Event
 from common.schema.ref import ma
 
@@ -9,6 +11,7 @@ class EventSchema(ma.SQLAlchemyAutoSchema):
         dump_only = ('id', 'author', '_links')
         include_fk = True
 
+    id = fields.UUID()
     _links = ma.Hyperlinks({
         'self': ma.URLFor('event', values={'event_id': '<id>'}),
         'collection': ma.URLFor('events')

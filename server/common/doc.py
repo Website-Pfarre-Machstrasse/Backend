@@ -1,9 +1,10 @@
 import copy
 import functools
 
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_apispec import FlaskApiSpec as Base
 from flask_apispec.apidoc import Converter as BaseConverter
-from flask_apispec.extension import make_apispec
 from flask_apispec.paths import CONVERTER_MAPPING, DEFAULT_TYPE
 from flask_apispec.utils import resolve_resource, merge_recursive, resolve_annotations
 from marshmallow import Schema
@@ -75,7 +76,7 @@ class Converter(BaseConverter):
             if not options.get('location'):
                 options['location'] = 'body'
 
-            if options['location'] == 'body' and self.spec.openapi_version.major < 3:
+            if options['location'] != 'body' or self.spec.openapi_version.major < 3:
                 extra_params += openapi_converter(schema, **options) if args else []
             else:
                 content_type = options.pop('content_type', 'application/json')
@@ -109,7 +110,10 @@ class Converter(BaseConverter):
                 else:
                     content_type = meta.get('content_type', None)
                     if not content_type:
-                        content_type = list(self.app.extensions['restful'].representations.keys())
+                        content_type = list(filter(
+                            lambda ctype: ctype.startswith('application/'),
+                            self.app.extensions['restful'].representations.keys()
+                        ))
                     if isinstance(content_type, (list, tuple, set)):
                         content_types = content_type
                     else:
@@ -126,9 +130,6 @@ class Converter(BaseConverter):
                     exploded[status_code]['description'] = meta.get('description', '')
             options.append(exploded)
         return merge_recursive(options)
-
-    def get_request_body(self, rule, view, docs, parent):
-        pass
 
 
 class ViewConverter(Converter):
@@ -153,15 +154,19 @@ class FlaskApiSpec(Base):
     def handlers(self):
         return {'application/json': self.spec.to_dict, 'application/yaml': self.spec.to_yaml}
 
-    def init_app(self, app):
+    def init_app(self, app, plugins=None, hook=None):
         self.app = app
         self.spec = self.app.config.get('APISPEC_SPEC') or \
                     make_apispec(self.app.config.get('APISPEC_TITLE', 'flask-apispec'),
                                  self.app.config.get('APISPEC_VERSION', 'v1'),
-                                 self.app.config.get('APISPEC_OAS_VERSION', '2.0'))
+                                 self.app.config.get('APISPEC_OAS_VERSION', '2.0'),
+                                 self.app.config.get('APISPEC_PLUGINS', plugins))
         self.add_swagger_routes()
         self.resource_converter = ResourceConverter(self.app, self.spec, self.document_options)
         self.view_converter = ViewConverter(self.app, self.spec, self.document_options)
+
+        if hook:
+            hook()
 
         for deferred in self._deferred:
             deferred()
@@ -170,6 +175,17 @@ class FlaskApiSpec(Base):
         from flask import request
         mime_type = request.accept_mimetypes.best_match(self.handlers.keys(), 'application/json')
         return self.handlers[mime_type]()
+
+
+def make_apispec(title='flask-apispec', version='v1', openapi_version='2.0', plugins=None):
+    if plugins is None:
+        plugins = [MarshmallowPlugin()]
+    return APISpec(
+        title=title,
+        version=version,
+        openapi_version=openapi_version,
+        plugins=plugins,
+    )
 
 
 doc = FlaskApiSpec()

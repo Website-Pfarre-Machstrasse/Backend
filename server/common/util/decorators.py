@@ -4,7 +4,7 @@ import flask
 import werkzeug
 from flask_apispec import doc, use_kwargs, utils
 from flask_apispec.annotations import annotate
-from flask_apispec.wrapper import Wrapper as OriginalWrapper
+from flask_apispec.wrapper import Wrapper as OriginalWrapper, identity, MARSHMALLOW_VERSION_INFO
 from flask_apispec.wrapper import unpack, packed
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
 
@@ -139,10 +139,27 @@ class Wrapper(OriginalWrapper):
         if isinstance(response, werkzeug.Response):
             return response
         rv, status_code, headers = unpack(response)
-        mv = self.marshal_result(rv, status_code)
+        mv, content_type = self.marshal_result(rv, status_code)
         app = flask.current_app
         api = app.extensions.get('restful', None)
         if api:
+            if content_type:
+                return api.make_response(mv, status_code, headers, fallback_mediatype=content_type)
             return api.make_response(mv, status_code, headers)
         else:
             return app.make_response(packed(mv, status_code, headers))
+
+    def marshal_result(self, result, status_code):
+        config = flask.current_app.config
+        format_response = config.get('APISPEC_FORMAT_RESPONSE', flask.jsonify) or identity
+        annotation = utils.resolve_annotations(self.func, 'schemas', self.instance)
+        schemas = utils.merge_recursive(annotation.options)
+        schema = schemas.get(status_code, schemas.get('default'))
+        if schema and annotation.apply is not False:
+            schema = utils.resolve_schema(schema['schema'], request=flask.request)
+            dumped = schema.dump(result)
+            output = dumped.data if MARSHMALLOW_VERSION_INFO[0] < 3 else dumped
+        else:
+            output = result
+
+        return format_response(output), schema['content_type']

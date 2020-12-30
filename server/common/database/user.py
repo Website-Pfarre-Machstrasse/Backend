@@ -1,8 +1,15 @@
+import enum
+
 from .mixins import UUIDKeyMixin
 from .ref import db
 from ..bcrypt import bcrypt
 from ..util import AuthenticationError
 from ..util.decorators import write_only_property
+
+
+class Role(enum.Enum):
+    admin = 'admin'
+    author = 'author'
 
 
 class User(UUIDKeyMixin, db.Model):
@@ -19,7 +26,7 @@ class User(UUIDKeyMixin, db.Model):
     last_name = db.Column(db.String(63), nullable=False)
     email = db.Column(db.String(127), nullable=False, unique=True)
     __password = db.Column(db.String, name='password', nullable=False)
-    role = db.Column(db.Enum('admin', 'author'), nullable=False, default='author')
+    role = db.Column(db.Enum(Role), nullable=False, default='author')
 
     @staticmethod
     def authenticate(username, password):

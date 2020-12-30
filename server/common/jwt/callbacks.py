@@ -7,7 +7,7 @@ __all__ = []
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(user: User):
-    return {'role': user.role}
+    return {'role': user.role.name}
 
 
 @jwt.user_identity_loader

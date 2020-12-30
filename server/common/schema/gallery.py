@@ -13,6 +13,7 @@ class GallerySchema(ma.SQLAlchemyAutoSchema):
         include_relationships = True
         include_fk = True
 
+    id = fields.UUID()
     author = ma.auto_field(required=False)
     media = fields.Nested(MediaSchema, many=True)
     _links = ma.Hyperlinks({

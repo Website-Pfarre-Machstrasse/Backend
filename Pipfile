@@ -19,6 +19,7 @@ flask-tinify = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 marshmallow = "*"
+marshmallow-enum = "*"
 diff-match-patch = "*"
 pyyaml = "*"
 

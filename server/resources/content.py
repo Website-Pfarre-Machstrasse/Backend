@@ -173,7 +173,7 @@ class Page(Resource):
 class PageContent(Resource):
     method_decorators = {'post': [jwt_required]}
 
-    @marshal_with({'type': 'string', 'format': 'markdown'}, code=200, content_type='text/markdown')
+    @marshal_with({'type': 'string', 'format': 'markdown'}, code=200, content_type='text/markdown', apply=False)
     def get(self, category_id, page_id):
         """
         Get the cached content of the page located at (category_id, page_id)
@@ -184,7 +184,7 @@ class PageContent(Resource):
             content_cache.cache(key, page)
         return content_cache.get(key, '')
 
-    @marshal_with({'type': 'string', 'format': 'markdown'}, code=201, content_type='text/markdown')
+    @marshal_with({'type': 'string', 'format': 'markdown'}, code=201, content_type='text/markdown', apply=False)
     def post(self, category_id, page_id):
         key = (category_id, page_id)
         page: PageModel = PageModel.query.get_or_404(key)
