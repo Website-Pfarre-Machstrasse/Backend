@@ -15,8 +15,8 @@ def register_resources(api, doc, app: Flask, marshmallow_plugin):
         doc.register(resource_class, endpoint=endpoint)
 
     register_resource(SelfResource, '/self', endpoint='self')
-    register_resource(UserResource, '/user', endpoint='users')
-    register_resource(UsersResource, '/user/<uuid:user_id>', endpoint='user')
+    register_resource(UsersResource, '/user', endpoint='users')
+    register_resource(UserResource, '/user/<uuid:user_id>', endpoint='user')
     register_resource(LoginResource, '/login', endpoint='login')
     register_resource(RefreshResource, '/refresh', endpoint='refresh')
     register_resource(GalleriesResource, '/galleries', endpoint='galleries')
@@ -37,10 +37,10 @@ def register_resources(api, doc, app: Flask, marshmallow_plugin):
     app.extensions['restful'] = api
 
     def hook():
-        from common.schema.ref import enum2properties, hyperlinks2properties, urlfor2properties
+        from common.schema.ref import enum2properties  # , hyperlinks2properties, urlfor2properties
         marshmallow_plugin.converter.add_attribute_function(enum2properties)
-        marshmallow_plugin.converter.add_attribute_function(hyperlinks2properties)
-        marshmallow_plugin.converter.add_attribute_function(urlfor2properties)
+        # marshmallow_plugin.converter.add_attribute_function(hyperlinks2properties)
+        # marshmallow_plugin.converter.add_attribute_function(urlfor2properties)
 
     doc.init_app(app, plugins=[marshmallow_plugin], hook=hook)
 

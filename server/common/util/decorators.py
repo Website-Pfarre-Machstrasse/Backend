@@ -1,3 +1,4 @@
+import re
 from functools import wraps
 
 import flask
@@ -7,19 +8,27 @@ from flask_apispec.annotations import annotate
 from flask_apispec.wrapper import Wrapper as OriginalWrapper, identity, MARSHMALLOW_VERSION_INFO
 from flask_apispec.wrapper import unpack, packed
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims, jwt_required as _jwt_required
+from werkzeug.exceptions import HTTPException
 
-from .exceptions import AuthorisationError
+from .exceptions import AuthorisationError, ServerError
 
-__all__ = ['admin_required', 'lazy_property', 'autodoc', 'write_only_property', 'tag', 'produces', 'params',
+__all__ = ['admin_required', 'lazy_property', 'autodoc', 'write_only_property', 'tag', 'params',
            'marshal_with', 'use_kwargs', 'transactional', 'jwt_required']
 
 
 def transactional(session):
     def decorator(fn):
+        @wraps(fn)
         def wrapper(*args, **kwargs):
-            with session.begin() as transaction:
-                kwargs.update(_transaction=transaction)
-                return fn(*args, **kwargs)
+            try:
+                with session.begin() as transaction:
+                    kwargs.update(_transaction=transaction)
+                    return fn(*args, **kwargs)
+            except Exception as e:
+                if isinstance(e, HTTPException):
+                    raise e
+                else:
+                    raise ServerError(e)
         return wrapper
     return decorator
 
@@ -60,17 +69,45 @@ def params(**kwargs):
     return decorator
 
 
-def tag(tag):
-    return doc(tags=[tag])
+def tag(*tag):
+    return doc(tags=[*tag])
 
 
-def produces(*mimetypes):
-    return doc(produces=list(mimetypes))
+def parse_meta(s):
+    param_regex = re.compile(":param ([a-zA-Z_][0-9a-zA-Z_]*): (.*)")
+    param_match = param_regex.search(s)
+    param_name = param_match.group(1)
+    param_description = param_match.group(2)
+    return param_name, {'description': param_description}
+
+
+def parse_doc(fn):
+    lines = fn.__doc__.split('\n')
+    if lines[0] == '' or lines[0].isspace():
+        lines.pop(0)
+    if lines[-1] == '' or lines[-1].isspace():
+        lines.pop()
+    lines = map(str.lstrip, lines)
+    lines = list(lines)
+    meta = filter(lambda s: s.startswith(':'), lines)
+    lines = filter(lambda s: not s.startswith(':'), lines)
+    meta = map(parse_meta, meta)
+    cleaned = '\n'.join(lines)
+    return {'description': cleaned, 'parameters': dict(meta)}
 
 
 def autodoc(fn):
-    if fn.__doc__:
-        return doc(description=fn.__doc__)(fn)
+    if callable(fn) and fn.__doc__:
+        parsed_doc = parse_doc(fn)
+        return doc(description=parsed_doc['description'], params=parsed_doc['parameters'])(fn)
+    elif isinstance(fn, type):
+        for name in fn.__dict__:
+            attr = getattr(fn, name)
+            if callable(attr) and attr.__doc__ and name in ('get', 'put', 'post', 'patch', 'delete'):
+                setattr(fn, name, autodoc(attr))
+        if fn.__doc__:
+            parsed_doc = parse_doc(fn)
+            return doc(description=parsed_doc['description'], params=parsed_doc['parameters'])(fn)
     return fn
 
 
@@ -151,6 +188,8 @@ class Wrapper(OriginalWrapper):
         app = flask.current_app
         api = app.extensions.get('restful', None)
         if api:
+            if headers:
+                content_type = headers['Content-Type'] or content_type
             if content_type:
                 return api.make_response(mv, status_code, headers, fallback_mediatype=content_type)
             return api.make_response(mv, status_code, headers)
@@ -164,8 +203,7 @@ class Wrapper(OriginalWrapper):
         schemas = utils.merge_recursive(annotation.options)
         schema = schemas.get(status_code, schemas.get('default'))
         if schema and annotation.apply is not False:
-            schema = utils.resolve_schema(schema['schema'], request=flask.request)
-            dumped = schema.dump(result)
+            dumped = utils.resolve_schema(schema['schema'], request=flask.request).dump(result)
             output = dumped.data if MARSHMALLOW_VERSION_INFO[0] < 3 else dumped
         else:
             output = result

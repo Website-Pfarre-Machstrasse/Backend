@@ -2,15 +2,19 @@ import re
 
 import sqlalchemy as sa
 from apispec.ext.marshmallow import MarshmallowPlugin as BaseMarshmallowPlugin, OpenAPIConverter, SchemaResolver
-from apispec.ext.marshmallow.common import get_fields
+from apispec.ext.marshmallow.common import get_fields, resolve_schema_cls
 from flask_marshmallow import Marshmallow
-from flask_marshmallow.fields import Hyperlinks, URLFor
+from flask_marshmallow.fields import Hyperlinks
 from marshmallow import Schema
+from marshmallow.fields import Field
 from marshmallow.schema import SchemaMeta
 from marshmallow_enum import EnumField
 from marshmallow_sqlalchemy import ModelConverter as BaseModelConverter
 
-__all__ = ['ma', 'ModelConverter', 'marshmallow_plugin', 'enum2properties', 'hyperlinks2properties', 'urlfor2properties']
+__all__ = ['ma', 'ModelConverter', 'marshmallow_plugin', 'FileField', 'enum2properties',
+           # 'hyperlinks2properties',
+           # 'urlfor2properties'
+           ]
 
 from werkzeug.routing import Rule
 
@@ -39,29 +43,20 @@ def enum2properties(self, field, **kwargs):
     return {}
 
 
-def hyperlinks2properties(self: OpenAPIConverter, field, **kwargs):
-    """
-    Add an OpenAPI extension for flask_marshmallow.fields.Hyperlinks instances
-    """
-    if isinstance(field, Hyperlinks):
-        return {'type': 'object'}
-    return {}
-
-
-def urlfor2properties(self: OpenAPIConverter, field, **kwargs):
-    """
-    Add an OpenAPI extension for flask_marshmallow.fields.URLFor instances
-    """
-    if isinstance(field, URLFor):
-        rules = doc.app.url_map._rules_by_endpoint[field.endpoint]
-        if len(rules) == 1:
-            rule = rules[0]  # type: Rule
-            _rule = re.compile('<[^:]*:([^>]*)>').sub(r'{\1}', rule.rule)
-            return {
-                'type': 'string',
-                'format': _rule
-            }
-    return {}
+# def urlfor2properties(self: OpenAPIConverter, field, **kwargs):
+#     """
+#     Add an OpenAPI extension for flask_marshmallow.fields.URLFor instances
+#     """
+#     if isinstance(field, URLFor):
+#         rules = doc.app.url_map._rules_by_endpoint[field.endpoint]
+#         if len(rules) == 1:
+#             rule = rules[0]  # type: Rule
+#             _rule = re.compile('<[^:]*:([^>]*)>').sub(r'{\1}', rule.rule)
+#             return {
+#                 'type': 'string',
+#                 'format': _rule
+#             }
+#     return {}
 
 
 class Resolver(SchemaResolver):
@@ -152,8 +147,22 @@ class Resolver(SchemaResolver):
         return links
 
 
+class FileField(Field):
+    def __init__(self, **additional_metadata):
+        additional_metadata.update(location='files')
+        super().__init__(**additional_metadata)
+
+
+class Converter(OpenAPIConverter):
+    def __init__(self, openapi_version, schema_name_resolver, spec):
+        self.field_mapping[FileField] = ("string", "binary")
+        self.field_mapping[Hyperlinks] = ("object", None)
+        super().__init__(openapi_version, schema_name_resolver, spec)
+
+
 class MarshmallowPlugin(BaseMarshmallowPlugin):
     Resolver = Resolver
+    Converter = Converter
 
     def operation_helper(self, operations, **kwargs):
         for operation in operations.values():
@@ -171,4 +180,28 @@ class MarshmallowPlugin(BaseMarshmallowPlugin):
                 self.resolver.resolve_response(response)
 
 
-marshmallow_plugin = MarshmallowPlugin()
+def resolver(schema):
+    """Default schema name resolver function that strips 'Schema' from the end of the class name."""
+    schema_cls = resolve_schema_cls(schema)
+    name = schema_cls.__name__
+    if name.endswith("Schema"):
+        name = name[:-6] or name
+    if not isinstance(schema, Schema):
+        schema = schema()
+    modifiers = {}
+    for modifier in ["only", "exclude", "partial"]:
+        attribute = getattr(schema, modifier)
+        if attribute:
+            modifiers[modifier] = attribute
+    attrs = []
+    for k, v in modifiers.items():
+        if k == "partial":
+            attrs.append(k)
+        else:
+            attrs.append(f'{k}={v}')
+    if len(attrs) > 0:
+        return f'{name}({",".join(attrs)})'
+    return name
+
+
+marshmallow_plugin = MarshmallowPlugin(resolver)

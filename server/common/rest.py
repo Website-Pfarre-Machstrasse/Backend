@@ -4,7 +4,7 @@ from flask_restful import Resource as RestfulResource
 from marshmallow import Schema
 from sqlalchemy.orm import Session
 
-from common.util import marshal_with, use_kwargs, transactional
+from common.util import marshal_with, use_kwargs, transactional, autodoc
 
 
 class Ref(BaseRef):
@@ -22,7 +22,8 @@ class Ref(BaseRef):
 
 
 class Resource(MethodResource, RestfulResource):
-    pass
+    def __init_subclass__(cls, **kwargs):
+        return autodoc(cls)
 
 
 class BasicCollectionResource(Resource):
@@ -53,17 +54,25 @@ class BasicResource(Resource):
 
     @use_kwargs(Ref('schema', partial=True))
     @marshal_with(Ref('schema'), code=200)
-    @marshal_with(Ref('schema'), code=201)
     @transactional(db_session)
-    def put(self, *args, _transaction, **kwargs):
-        obj = self.model.query.get(args)
-        if not obj:
-            obj = self.model(**kwargs)
-            _transaction.session.add(obj)
-            return obj, 201
-        else:
-            obj.__dict__.update(**kwargs)
-            return obj, 200
+    def patch(self, *args, _transaction, **kwargs):
+        obj = self.model.query.get_or_404(args)
+        obj.__dict__.update(**kwargs)
+        return obj, 200
+
+    # @use_kwargs(Ref('schema'))
+    # @marshal_with(Ref('schema'), code=200)
+    # @marshal_with(Ref('schema'), code=201)
+    # @transactional(db_session)
+    # def put(self, *args, _transaction, **kwargs):
+    #     obj = self.model.query.get(args)
+    #     if obj:
+    #         obj.__dict__.update(**kwargs)
+    #         return obj, 200
+    #     else:
+    #         obj = self.model(**kwargs)
+    #         _transaction.session.add(obj)
+    #         return obj, 201
 
     @marshal_with(None, code=204)
     @transactional(db_session)

@@ -76,21 +76,30 @@ class Converter(BaseConverter):
             if not options.get('location'):
                 options['location'] = 'body'
 
-            if options['location'] != 'body' or self.spec.openapi_version.major < 3:
+            if options['location'] not in ('body', 'json', 'form', 'files', 'json_or_form') \
+               or self.spec.openapi_version.major < 3:
                 extra_params += openapi_converter(schema, **options) if args else []
-            else:
-                content_type = options.pop('content_type', 'application/json')
+            elif args:
+                content_type = options.pop('content_type', None)
+                if not content_type:
+                    if options['location'] in ('form', 'files'):
+                        content_type = 'multipart/formdata'
+                    else:
+                        content_type = 'application/json'
                 description = options.pop('description', '')
                 required = options.pop('required', True)
-                docs['requestBody'] = {
-                    'description': description,
-                    'required': required,
-                    'content': {
-                        content_type: {
-                            'schema': schema
-                        }
+
+                body = docs.setdefault('requestBody', {})
+                body['description'] = description
+                body['required'] = required
+                content = body.setdefault('content', {})
+                content[content_type] = {
+                    'schema': schema
+                }
+                if options['location'] == 'json_or_form':
+                    content['multipart/formdata'] = {
+                        'schema': schema
                     }
-                } if args else {}
 
         rule_params = rule_to_params(rule, docs.get('params'), major_api_version=self.spec.openapi_version.major) or []
 

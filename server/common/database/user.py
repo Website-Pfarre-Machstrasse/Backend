@@ -29,7 +29,10 @@ class User(UUIDKeyMixin, db.Model):
     role = db.Column(db.Enum(Role), nullable=False, default='author')
 
     @staticmethod
-    def authenticate(username, password):
+    def authenticate(username=None, password=None):
+        if not username or not password:
+            raise AuthenticationError('No credentials provided')
+
         user: User = User.query.filter_by(email=username).first()
 
         if not user:

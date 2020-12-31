@@ -32,14 +32,24 @@ diff_maker = diff_match_patch()
 @tag('content')
 class Categories(Resource):
 
+    @tag('category')
     @marshal_with(CategorySchema(many=True), code=200)
     def get(self):
+        """
+        ## Get all categories
+        """
         return CategoryModel.query.all()
 
+    @tag('category')
     @jwt_required
     @use_kwargs(CategorySchema, required=True)
     @marshal_with(CategorySchema, code=201)
     def post(self, **kwargs):
+        """
+        ## Create a category
+
+        ***Requires Authentication***
+        """
         category = CategoryModel(**kwargs)
         try:
             db.session.add(category)
@@ -54,15 +64,24 @@ class Categories(Resource):
 @params(category_id='The id of the category')
 class Category(Resource):
 
+    @tag('category')
     @marshal_with(CategorySchema, code=200)
     def get(self, category_id):
+        """
+        ## Get the category (category_id)
+        """
         return CategoryModel.query.get_or_404(category_id)
 
+    @tag('category')
     @jwt_required
     @use_kwargs(CategorySchema(partial=True))
     @marshal_with(CategorySchema, code=200)
     @marshal_with(CategorySchema, code=201)
     def put(self, category_id, **kwargs):
+        """
+        ## Edit the category (category_id)
+        ***Requires Authentication***
+        """
         category = CategoryModel.query.get(category_id)
         if not category:
             category = CategoryModel(**kwargs)
@@ -83,9 +102,15 @@ class Category(Resource):
                 raise ServerError(e)
         return category
 
+    @tag('category')
     @jwt_required
     @marshal_with(None, code=204)
     def delete(self, category_id):
+        """
+        ## Delete the category (category_id)
+
+        ***Requires Authentication***
+        """
         category = CategoryModel.query.get_or_404(category_id)
         try:
             db.session.delete(category)
@@ -95,10 +120,16 @@ class Category(Resource):
             raise ServerError(e)
         return {}, 204
 
+    @tag('page')
     @jwt_required
     @use_kwargs(PageSchema, required=True)
     @marshal_with(PageSchema, code=201)
     def post(self, **kwargs):
+        """
+        ## Create a page in the category (category_id)
+
+        ***Requires Authentication***
+        """
         page = PageModel(**kwargs)
         try:
             db.session.add(page)
@@ -113,8 +144,12 @@ class Category(Resource):
 @params(category_id='The id of the category')
 class Pages(Resource):
 
+    @tag('page')
     @marshal_with(PageSchema(many=True), code=200)
     def get(self, category_id):
+        """
+        ## Get all pages for the category (category_id)
+        """
         return CategoryModel.query.get_or_404(category_id).pages
 
 
@@ -122,15 +157,25 @@ class Pages(Resource):
 @params(category_id='The id of the category', page_id='The id of the page')
 class Page(Resource):
 
+    @tag('page')
     @marshal_with(PageSchema, code=200)
     def get(self, category_id, page_id):
+        """
+        ## Get the page located at (category_id, page_id)
+        """
         return PageModel.query.get_or_404((category_id, page_id))
 
+    @tag('page')
     @jwt_required
     @use_kwargs(PageSchema(partial=True), required=True)
     @marshal_with(PageSchema, code=200)
     @marshal_with(PageSchema, code=201)
     def put(self, category_id, page_id, **kwargs):
+        """
+        ## Edit the page located at (category_id, page_id) or create it if it doesn't exist
+
+        ***Requires Authentication***
+        """
         page = PageModel.query.get((category_id, page_id))
         if not page:
             page = PageModel(**kwargs)
@@ -155,9 +200,15 @@ class Page(Resource):
                 raise ServerError(e)
         return page
 
+    @tag('page')
     @jwt_required
     @marshal_with(None, code=204)
     def delete(self, category_id, page_id):
+        """
+        ## Delete the page located at (category_id, page_id)
+
+        ***Requires Authentication***
+        """
         page = PageModel.query.get_or_404((category_id, page_id))
         try:
             db.session.delete(page)
@@ -175,7 +226,7 @@ class PageContent(Resource):
     @marshal_with({'type': 'string', 'format': 'markdown'}, code=200, content_type='text/markdown', apply=False)
     def get(self, category_id, page_id):
         """
-        Get the cached content of the page located at (category_id, page_id)
+        ## Get the cached content of the page located at (category_id, page_id)
         """
         key = (category_id, page_id)
         page: PageModel = PageModel.query.get_or_404(key)
@@ -186,6 +237,11 @@ class PageContent(Resource):
     @jwt_required
     @marshal_with({'type': 'string', 'format': 'markdown'}, code=201, content_type='text/markdown', apply=False)
     def post(self, category_id, page_id):
+        """
+        ## Set the new content of the page located at (category_id, page_id)
+
+        ***Requires Authentication***
+        """
         key = (category_id, page_id)
         page: PageModel = PageModel.query.get_or_404(key)
         if content_cache.should_cache(key, page_version=page.last_update):

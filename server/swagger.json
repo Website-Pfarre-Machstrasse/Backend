@@ -26,7 +26,7 @@
                 ],
                 "type": "object"
             },
-            "Category1": {
+            "Category(partial)": {
                 "properties": {
                     "_links": {
                         "readOnly": true,
@@ -53,9 +53,7 @@
                         "type": "object"
                     },
                     "author": {
-                        "format": "uuid",
-                        "readOnly": true,
-                        "type": "string"
+                        "readOnly": true
                     },
                     "details": {
                         "maxLength": 255,
@@ -80,7 +78,6 @@
                     }
                 },
                 "required": [
-                    "author",
                     "details",
                     "end",
                     "name",
@@ -88,16 +85,14 @@
                 ],
                 "type": "object"
             },
-            "Event1": {
+            "Event(partial)": {
                 "properties": {
                     "_links": {
                         "readOnly": true,
                         "type": "object"
                     },
                     "author": {
-                        "format": "uuid",
-                        "readOnly": true,
-                        "type": "string"
+                        "readOnly": true
                     },
                     "details": {
                         "maxLength": 255,
@@ -121,6 +116,18 @@
                         "type": "string"
                     }
                 },
+                "type": "object"
+            },
+            "File": {
+                "properties": {
+                    "file": {
+                        "format": "binary",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "file"
+                ],
                 "type": "object"
             },
             "Gallery": {
@@ -156,7 +163,7 @@
                 ],
                 "type": "object"
             },
-            "Gallery1": {
+            "Gallery(partial)": {
                 "properties": {
                     "_links": {
                         "readOnly": true,
@@ -184,18 +191,6 @@
                         "type": "string"
                     }
                 },
-                "type": "object"
-            },
-            "Generated": {
-                "properties": {
-                    "media_id": {
-                        "format": "uuid",
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "media_id"
-                ],
                 "type": "object"
             },
             "Login": {
@@ -247,6 +242,18 @@
                 ],
                 "type": "object"
             },
+            "MediaId": {
+                "properties": {
+                    "media_id": {
+                        "format": "uuid",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "media_id"
+                ],
+                "type": "object"
+            },
             "Page": {
                 "properties": {
                     "_links": {
@@ -277,7 +284,7 @@
                 ],
                 "type": "object"
             },
-            "Page1": {
+            "Page(partial)": {
                 "properties": {
                     "_links": {
                         "readOnly": true,
@@ -312,7 +319,7 @@
                 },
                 "type": "object"
             },
-            "Token1": {
+            "Token(only={'access_token'})": {
                 "properties": {
                     "access_token": {
                         "type": "string"
@@ -362,6 +369,44 @@
                     "last_name"
                 ],
                 "type": "object"
+            },
+            "User(partial)": {
+                "properties": {
+                    "_links": {
+                        "readOnly": true,
+                        "type": "object"
+                    },
+                    "email": {
+                        "maxLength": 127,
+                        "type": "string"
+                    },
+                    "first_name": {
+                        "maxLength": 63,
+                        "type": "string"
+                    },
+                    "id": {
+                        "format": "uuid",
+                        "readOnly": true,
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "maxLength": 63,
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string",
+                        "writeOnly": true
+                    },
+                    "role": {
+                        "enum": [
+                            "admin",
+                            "author"
+                        ],
+                        "maxLength": 6,
+                        "type": "string"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -380,6 +425,7 @@
     "paths": {
         "/api/category": {
             "get": {
+                "description": "## Get all categories",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -414,10 +460,11 @@
                     }
                 },
                 "tags": [
-                    "content"
+                    "category"
                 ]
             },
             "post": {
+                "description": "## Create a category\n\n***Requires Authentication***",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -465,12 +512,13 @@
                     }
                 ],
                 "tags": [
-                    "content"
+                    "category"
                 ]
             }
         },
         "/api/category/{category_id}": {
             "delete": {
+                "description": "## Delete the category (category_id)\n\n***Requires Authentication***",
                 "parameters": [
                     {
                         "description": "The id of the category",
@@ -498,10 +546,11 @@
                     }
                 ],
                 "tags": [
-                    "content"
+                    "category"
                 ]
             },
             "get": {
+                "description": "## Get the category (category_id)",
                 "parameters": [
                     {
                         "description": "The id of the category",
@@ -543,10 +592,11 @@
                     }
                 },
                 "tags": [
-                    "content"
+                    "category"
                 ]
             },
             "post": {
+                "description": "## Create a page in the category (category_id)\n\n***Requires Authentication***",
                 "parameters": [
                     {
                         "description": "The id of the category",
@@ -609,10 +659,11 @@
                     }
                 ],
                 "tags": [
-                    "content"
+                    "page"
                 ]
             },
             "put": {
+                "description": "## Edit the category (category_id)\n***Requires Authentication***",
                 "parameters": [
                     {
                         "description": "The id of the category",
@@ -628,7 +679,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Category1"
+                                "$ref": "#/components/schemas/Category(partial)"
                             }
                         }
                     },
@@ -697,12 +748,13 @@
                     }
                 ],
                 "tags": [
-                    "content"
+                    "category"
                 ]
             }
         },
         "/api/category/{category_id}/page": {
             "get": {
+                "description": "## Get all pages for the category (category_id)",
                 "parameters": [
                     {
                         "description": "The id of the category",
@@ -752,12 +804,13 @@
                     }
                 },
                 "tags": [
-                    "content"
+                    "page"
                 ]
             }
         },
         "/api/category/{category_id}/page/{page_id}": {
             "delete": {
+                "description": "## Delete the page located at (category_id, page_id)\n\n***Requires Authentication***",
                 "parameters": [
                     {
                         "description": "The id of the page",
@@ -794,10 +847,11 @@
                     }
                 ],
                 "tags": [
-                    "content"
+                    "page"
                 ]
             },
             "get": {
+                "description": "## Get the page located at (category_id, page_id)",
                 "parameters": [
                     {
                         "description": "The id of the page",
@@ -853,10 +907,11 @@
                     }
                 },
                 "tags": [
-                    "content"
+                    "page"
                 ]
             },
             "put": {
+                "description": "## Edit the page located at (category_id, page_id) or create it if it doesn't exist\n\n***Requires Authentication***",
                 "parameters": [
                     {
                         "description": "The id of the page",
@@ -881,7 +936,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Page1"
+                                "$ref": "#/components/schemas/Page(partial)"
                             }
                         }
                     },
@@ -960,12 +1015,13 @@
                     }
                 ],
                 "tags": [
-                    "content"
+                    "page"
                 ]
             }
         },
         "/api/category/{category_id}/page/{page_id}/content": {
             "get": {
+                "description": "## Get the cached content of the page located at (category_id, page_id)",
                 "parameters": [
                     {
                         "description": "The id of the page",
@@ -1004,6 +1060,7 @@
                 ]
             },
             "post": {
+                "description": "## Set the new content of the page located at (category_id, page_id)\n\n***Requires Authentication***",
                 "parameters": [
                     {
                         "description": "The id of the page",
@@ -1049,6 +1106,7 @@
         },
         "/api/event": {
             "get": {
+                "description": "## Get all events between start and end",
                 "parameters": [
                     {
                         "in": "query",
@@ -1100,6 +1158,7 @@
                 ]
             },
             "post": {
+                "description": "## Add a new event\n***Requires Authentication***",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -1147,8 +1206,10 @@
         },
         "/api/event/{event_id}": {
             "delete": {
+                "description": "## Delete the event with the id event_id\n***Requires Authentication***",
                 "parameters": [
                     {
+                        "description": "The id of the Event",
                         "in": "path",
                         "name": "event_id",
                         "required": true,
@@ -1177,8 +1238,10 @@
                 ]
             },
             "get": {
+                "description": "## Get the event with the id event_id",
                 "parameters": [
                     {
+                        "description": "The id of the Event",
                         "in": "path",
                         "name": "event_id",
                         "required": true,
@@ -1214,9 +1277,11 @@
                     "event"
                 ]
             },
-            "put": {
+            "patch": {
+                "description": "## Modify the event with the id event_id\n***Requires Authentication***",
                 "parameters": [
                     {
+                        "description": "The id of the Event",
                         "in": "path",
                         "name": "event_id",
                         "required": true,
@@ -1229,7 +1294,63 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Event1"
+                                "$ref": "#/components/schemas/Event(partial)"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Event"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1event~1{event_id}/get",
+                                "parameters": {
+                                    "event_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "event"
+                ]
+            },
+            "put": {
+                "description": "## Modify the event with the id event_id\n***Requires Authentication***",
+                "parameters": [
+                    {
+                        "description": "The id of the Event",
+                        "in": "path",
+                        "name": "event_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Event"
                             }
                         }
                     },
@@ -1271,6 +1392,7 @@
         },
         "/api/galleries": {
             "get": {
+                "description": "## Get all galleries",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -1303,6 +1425,7 @@
                 ]
             },
             "post": {
+                "description": "## Add a new gallery\n***Requires Authentication***",
                 "parameters": [],
                 "requestBody": {
                     "content": {
@@ -1320,10 +1443,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "items": {
-                                        "$ref": "#/components/schemas/Gallery"
-                                    },
-                                    "type": "array"
+                                    "$ref": "#/components/schemas/Gallery"
                                 }
                             }
                         },
@@ -1353,8 +1473,10 @@
         },
         "/api/galleries/{gallery_id}": {
             "delete": {
+                "description": "## Delete the gallery with the id gallery_id\n***Requires Authentication***",
                 "parameters": [
                     {
+                        "description": "The id of the Gallery",
                         "in": "path",
                         "name": "gallery_id",
                         "required": true,
@@ -1385,6 +1507,7 @@
             "get": {
                 "parameters": [
                     {
+                        "description": "The id of the Gallery",
                         "in": "path",
                         "name": "gallery_id",
                         "required": true,
@@ -1420,9 +1543,11 @@
                     "gallery"
                 ]
             },
-            "post": {
+            "patch": {
+                "description": "## Modify the gallery with the id gallery_id\n***Requires Authentication***",
                 "parameters": [
                     {
+                        "description": "The id of the Gallery",
                         "in": "path",
                         "name": "gallery_id",
                         "required": true,
@@ -1435,7 +1560,63 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Generated"
+                                "$ref": "#/components/schemas/Gallery(partial)"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Gallery"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1galleries/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
+                                "parameters": {
+                                    "gallery_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "gallery"
+                ]
+            },
+            "post": {
+                "description": "## Add existing media with id media_id to the gallery with id gallery_id\n***Requires Authentication***",
+                "parameters": [
+                    {
+                        "description": "The id of the Gallery",
+                        "in": "path",
+                        "name": "gallery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MediaId"
                             }
                         }
                     },
@@ -1475,8 +1656,10 @@
                 ]
             },
             "put": {
+                "description": "## Modify the gallery with the id gallery_id\n***Requires Authentication***",
                 "parameters": [
                     {
+                        "description": "The id of the Gallery",
                         "in": "path",
                         "name": "gallery_id",
                         "required": true,
@@ -1489,7 +1672,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Gallery1"
+                                "$ref": "#/components/schemas/Gallery"
                             }
                         }
                     },
@@ -1498,27 +1681,6 @@
                 },
                 "responses": {
                     "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Gallery"
-                                }
-                            }
-                        },
-                        "description": "",
-                        "links": {
-                            "collection": {
-                                "operationRef": "#/paths/~1api~1galleries/get"
-                            },
-                            "self": {
-                                "operationRef": "#/paths/~1api~1galleries~1{gallery_id}/get",
-                                "parameters": {
-                                    "gallery_id": "$response.body#/id"
-                                }
-                            }
-                        }
-                    },
-                    "201": {
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1552,10 +1714,16 @@
         },
         "/api/login": {
             "post": {
+                "description": "## Login a user with the given username and password located in the json request or the form",
                 "parameters": [],
                 "requestBody": {
                     "content": {
                         "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Login"
+                            }
+                        },
+                        "multipart/formdata": {
                             "schema": {
                                 "$ref": "#/components/schemas/Login"
                             }
@@ -1583,6 +1751,7 @@
         },
         "/api/media": {
             "get": {
+                "description": "## Get the media library",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -1628,7 +1797,19 @@
                 ]
             },
             "post": {
+                "description": "## Add a new file to the media library\n***Requires Authentication***",
                 "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "multipart/formdata": {
+                            "schema": {
+                                "$ref": "#/components/schemas/File"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
                 "responses": {
                     "201": {
                         "content": {
@@ -1677,8 +1858,10 @@
         },
         "/api/media/{media_id}": {
             "delete": {
+                "description": "## Delete the media with id media_id\n***Requires Authentication***\n\nYou can only edit a media that belongs to you if you are not admin",
                 "parameters": [
                     {
+                        "description": "The id of the Media",
                         "in": "path",
                         "name": "media_id",
                         "required": true,
@@ -1707,8 +1890,10 @@
                 ]
             },
             "get": {
+                "description": "## Get metadata for the media entry with id media_id",
                 "parameters": [
                     {
+                        "description": "The id of the Media",
                         "in": "path",
                         "name": "media_id",
                         "required": true,
@@ -1760,8 +1945,10 @@
         },
         "/api/media/{media_id}/file": {
             "get": {
+                "description": "## Get the file for the media with the id media_id",
                 "parameters": [
                     {
+                        "description": "The id of the Media",
                         "in": "path",
                         "name": "media_id",
                         "required": true,
@@ -1802,13 +1989,14 @@
         },
         "/api/refresh": {
             "post": {
+                "description": "## Request a new access_token for the current refresh_token in the Authorisation header",
                 "parameters": [],
                 "responses": {
                     "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Token1"
+                                    "$ref": "#/components/schemas/Token(only={'access_token'})"
                                 }
                             }
                         },
@@ -1822,9 +2010,10 @@
         },
         "/api/self": {
             "get": {
+                "description": "## Get the currently authenticated user\n***Requires Authentication***",
                 "parameters": [],
                 "responses": {
-                    "default": {
+                    "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1858,9 +2047,179 @@
         },
         "/api/user": {
             "get": {
+                "description": "## Get all users\n***Requires Authentication***",
                 "parameters": [],
                 "responses": {
                     "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1user/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "user_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "user"
+                ]
+            },
+            "post": {
+                "description": "## Create a new user\n***Requires administrator rights***",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1user/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "user_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/api/user/{user_id}": {
+            "delete": {
+                "description": "## Delete the user with id user_id\n***Requires administrator rights***",
+                "parameters": [
+                    {
+                        "description": "The id of the User",
+                        "in": "path",
+                        "name": "user_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            },
+            "get": {
+                "description": "## Get user by id",
+                "parameters": [
+                    {
+                        "description": "The id of the User",
+                        "in": "path",
+                        "name": "user_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        },
+                        "description": "",
+                        "links": {
+                            "collection": {
+                                "operationRef": "#/paths/~1api~1user/get"
+                            },
+                            "self": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "user_id": "$response.body#/id"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "user"
+                ]
+            },
+            "patch": {
+                "description": "## Modify user with id user_id\n***Requires Authentication***\n\nYou can only edit yourself if you are not admin",
+                "parameters": [
+                    {
+                        "description": "The id of the User",
+                        "in": "path",
+                        "name": "user_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User(partial)"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -1890,12 +2249,12 @@
                 "tags": [
                     "user"
                 ]
-            }
-        },
-        "/api/user/{user_id}": {
-            "get": {
+            },
+            "put": {
+                "description": "## Modify user with id user_id\n***Requires Authentication***\n\nYou can only edit yourself if you are not admin",
                 "parameters": [
                     {
+                        "description": "The id of the User",
                         "in": "path",
                         "name": "user_id",
                         "required": true,
@@ -1904,15 +2263,23 @@
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    },
+                    "description": "",
+                    "required": true
+                },
                 "responses": {
-                    "default": {
+                    "200": {
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "items": {
-                                        "$ref": "#/components/schemas/User"
-                                    },
-                                    "type": "array"
+                                    "$ref": "#/components/schemas/User"
                                 }
                             }
                         },

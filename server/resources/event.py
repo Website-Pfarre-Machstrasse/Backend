@@ -1,25 +1,26 @@
 from datetime import datetime
 from typing import Union
 
-from flask_apispec import use_kwargs
 from flask_jwt_extended import get_current_user
-from marshmallow import fields
 
 from common.database import db
+from common.database.user import Role
 from common.rest import Resource
-from common.schema import EventSchema
-from common.util import ServerError
-from common.util.decorators import tag, marshal_with, jwt_required
+from common.schema import EventSchema, EventFilterSchema
+from common.util import AuthorisationError
+from common.util.decorators import tag, marshal_with, jwt_required, params, transactional, use_kwargs
 from server.common.database import Event as EventModel
 
 
 @tag('event')
 class Events(Resource):
 
-    @use_kwargs({'start': fields.DateTime(required=False),
-                 'end': fields.DateTime(required=False)}, location='query')
+    @use_kwargs(EventFilterSchema, location='query')
     @marshal_with(EventSchema(many=True), code=200)
     def get(self, start: Union[datetime, None] = None, end: Union[datetime, None] = None):
+        """
+        ## Get all events between start and end
+        """
         filters = []
         if not start:
             start = datetime.now()
@@ -37,46 +38,69 @@ class Events(Resource):
     @jwt_required
     @use_kwargs(EventSchema)
     @marshal_with(EventSchema, code=201)
-    def post(self, **kwargs):
+    @transactional(db.session)
+    def post(self, _transaction, **kwargs):
+        """
+        ## Add a new event
+        ***Requires Authentication***
+        """
         event = EventModel(**kwargs)
-        event.author = get_current_user().id
-        try:
-            db.session.add(event)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            raise ServerError(e)
+        _transaction.session.add(event)
         return event, 201
 
 
 @tag('event')
+@params(event_id='The id of the Event')
 class Event(Resource):
 
     @marshal_with(EventSchema, code=200)
     def get(self, event_id):
+        """
+        ## Get the event with the id event_id
+        """
         return EventModel.query.get_or_404(event_id)
+
+    @jwt_required
+    @use_kwargs(EventSchema)
+    @marshal_with(EventSchema, code=200)
+    def put(self, event_id, **kwargs):
+        """
+        ## Modify the event with the id event_id
+        ***Requires Authentication***
+        """
+        event = EventModel.query.get_or_404(event_id)
+        user = get_current_user()
+        if event.owner is not user and user.role != Role.admin:
+            raise AuthorisationError('You are not allowed to delete this media')
+        event.__dict__.update(kwargs)
+        return event
 
     @jwt_required
     @use_kwargs(EventSchema(partial=True))
     @marshal_with(EventSchema, code=200)
-    def put(self, event_id, **kwargs):
+    def patch(self, event_id, **kwargs):
+        """
+        ## Modify the event with the id event_id
+        ***Requires Authentication***
+        """
         event = EventModel.query.get_or_404(event_id)
-        try:
-            event.__dict__.update(kwargs)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            raise ServerError(e)
+        user = get_current_user()
+        if event.owner is not user and user.role != Role.admin:
+            raise AuthorisationError('You are not allowed to delete this media')
+        event.__dict__.update(kwargs)
         return event
 
     @jwt_required
     @marshal_with(None, code=204)
-    def delete(self, event_id):
+    @transactional(db.session)
+    def delete(self, event_id, _transaction):
+        """
+        ## Delete the event with the id event_id
+        ***Requires Authentication***
+        """
         event = EventModel.query.get_or_404(event_id)
-        try:
-            db.session.delete(event)
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            raise ServerError(e)
+        user = get_current_user()
+        if event.owner is not user and user.role != Role.admin:
+            raise AuthorisationError('You are not allowed to delete this media')
+        _transaction.session.delete(event)
         return {}, 204
