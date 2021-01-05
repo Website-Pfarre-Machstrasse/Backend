@@ -3,15 +3,15 @@
     <option name="application" value="create_app" />
     <option name="flaskDebug" value="true" />
     <module name="Website-Pfarre-Machstrasse-Backend" />
-    <option name="target" value="app" />
+    <option name="target" value="server" />
     <option name="targetType" value="PYTHON" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <option name="SDK_HOME" value="C:\Users\georg\.virtualenvs\Website-Pfarre-Machstrasse-Backend-wX-YlpSa\Scripts\python.exe" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    <option name="IS_MODULE_SDK" value="false" />
-    <option name="ADD_CONTENT_ROOTS" value="true" />
-    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="false" />
+    <option name="ADD_SOURCE_ROOTS" value="false" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="launchJavascriptDebuger" value="false" />
     <method v="2" />

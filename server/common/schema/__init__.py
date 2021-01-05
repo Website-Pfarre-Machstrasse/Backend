@@ -1,4 +1,5 @@
 from .category import CategorySchema
+from .change import ChangeSchema
 from .event import EventSchema
 from .event_filter import EventFilterSchema
 from .file import FileSchema
@@ -12,4 +13,4 @@ from .token import TokenSchema
 from .user import UserSchema
 
 __all__ = ['ma', 'UserSchema', 'MediaSchema', 'EventSchema', 'PageSchema', 'CategorySchema', 'GallerySchema',
-           'LoginSchema', 'TokenSchema', 'FileSchema', 'MediaIdSchema', 'EventFilterSchema']
+           'LoginSchema', 'TokenSchema', 'FileSchema', 'MediaIdSchema', 'EventFilterSchema', 'ChangeSchema']

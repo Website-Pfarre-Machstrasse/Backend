@@ -1,7 +1,7 @@
 from flask_jwt_extended import get_current_user
 
-from .mixins import UUIDKeyMixin, UUIDType
-from .ref import db
+from server.common.database.mixins import UUIDKeyMixin, UUIDType
+from server.common.database.ref import db
 
 
 class Media(UUIDKeyMixin, db.Model):

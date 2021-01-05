@@ -1,7 +1,7 @@
 from marshmallow import fields
 
-from common.database.user import User
-from common.schema.ref import ma, ModelConverter
+from server.common.database import User
+from server.common.schema.ref import ma, ModelConverter
 
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
@@ -21,3 +21,4 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
 
 
 User.__marshmallow__ = UserSchema
+

@@ -8,9 +8,11 @@ __all__ = ['AuthorisationError',
 
 
 class CustomHTTPException(HTTPException):
+
     def __init__(self, message: str, extra=None):
         self.message = message
         self.extra = extra
+        self.response = None
 
     @property
     def data(self):

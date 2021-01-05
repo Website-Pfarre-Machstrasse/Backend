@@ -1,11 +1,11 @@
-from .category import Category
-from .change import Change
-from .event import Event
-from .gallery import Gallery
-from .media import Media
-from .page import Page
-from .ref import db
-from .user import User
+from server.common.database.category import Category
+from server.common.database.change import Change
+from server.common.database.event import Event
+from server.common.database.gallery import Gallery
+from server.common.database.media import Media
+from server.common.database.page import Page
+from server.common.database.ref import db
+from server.common.database.user import User
 
 __all__ = ['db', 'User', 'Category', 'Page', 'Change', 'Media', 'Gallery', 'Event', 'setup']
 

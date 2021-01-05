@@ -1,52 +1,14 @@
 from datetime import datetime
-from typing import Union
 
 from flask_jwt_extended import get_current_user
 
-from common.database import db
-from common.database.user import Role
-from common.rest import Resource
-from common.schema import EventSchema, EventFilterSchema
-from common.util import AuthorisationError
-from common.util.decorators import tag, marshal_with, jwt_required, params, transactional, use_kwargs
 from server.common.database import Event as EventModel
-
-
-@tag('event')
-class Events(Resource):
-
-    @use_kwargs(EventFilterSchema, location='query')
-    @marshal_with(EventSchema(many=True), code=200)
-    def get(self, start: Union[datetime, None] = None, end: Union[datetime, None] = None):
-        """
-        ## Get all events between start and end
-        """
-        filters = []
-        if not start:
-            start = datetime.now()
-        filters.append(EventModel.start > start)
-        if not end:
-            now = datetime.now()
-            year, month = divmod(now.month + 1, 12)
-            if month == 0:
-                month = 12
-                year = year - 1
-            end = now.replace(year=now.year + year, month=month)
-        filters.append(EventModel.end < end)
-        return EventModel.query.filter(*filters).all()
-
-    @jwt_required
-    @use_kwargs(EventSchema)
-    @marshal_with(EventSchema, code=201)
-    @transactional(db.session)
-    def post(self, _transaction, **kwargs):
-        """
-        ## Add a new event
-        ***Requires Authentication***
-        """
-        event = EventModel(**kwargs)
-        _transaction.session.add(event)
-        return event, 201
+from server.common.database import db
+from server.common.rest import Resource
+from server.common.schema import EventSchema, EventFilterSchema
+from server.common.util import AuthorisationError
+from server.common.util.decorators import tag, marshal_with, jwt_required, params, transactional, use_kwargs
+from server.common.util.enums import Role
 
 
 @tag('event')
@@ -72,7 +34,8 @@ class Event(Resource):
         user = get_current_user()
         if event.owner is not user and user.role != Role.admin:
             raise AuthorisationError('You are not allowed to delete this media')
-        event.__dict__.update(kwargs)
+        for k, v in kwargs.items():
+            setattr(event, k, v)
         return event
 
     @jwt_required
@@ -87,7 +50,8 @@ class Event(Resource):
         user = get_current_user()
         if event.owner is not user and user.role != Role.admin:
             raise AuthorisationError('You are not allowed to delete this media')
-        event.__dict__.update(kwargs)
+        for k, v in kwargs.items():
+            setattr(event, k, v)
         return event
 
     @jwt_required
@@ -104,3 +68,41 @@ class Event(Resource):
             raise AuthorisationError('You are not allowed to delete this media')
         _transaction.session.delete(event)
         return {}, 204
+
+
+@tag('event')
+class Events(Resource):
+    __child__ = Event
+
+    @use_kwargs(EventFilterSchema, location='query')
+    @marshal_with(EventSchema(many=True), code=200)
+    def get(self, start: datetime = None, end: datetime = None):
+        """
+        ## Get all events between start and end
+        """
+        filters = []
+        if not start:
+            start = datetime.now()
+        if not end:
+            now = datetime.now()
+            year, month = divmod(now.month + 1, 12)
+            if month == 0:
+                month = 12
+                year = year - 1
+            end = now.replace(year=now.year + year, month=month)
+        filters.append(EventModel.start < end)
+        filters.append(EventModel.end > start)
+        return EventModel.query.filter(*filters).all()
+
+    @jwt_required
+    @use_kwargs(EventSchema)
+    @marshal_with(EventSchema, code=201)
+    @transactional(db.session)
+    def post(self, _transaction, **kwargs):
+        """
+        ## Add a new event
+        ***Requires Authentication***
+        """
+        event = EventModel(**kwargs)
+        _transaction.session.add(event)
+        return event, 201

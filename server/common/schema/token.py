@@ -1,6 +1,6 @@
 from marshmallow import fields
 
-from common.schema.ref import ma
+from server.common.schema.ref import ma
 
 
 class TokenSchema(ma.Schema):

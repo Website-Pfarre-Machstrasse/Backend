@@ -1,5 +1,7 @@
-from .ref import db
-from .mixins import UUIDType
+from flask_jwt_extended import get_current_user
+
+from server.common.database.mixins import UUIDType
+from server.common.database.ref import db
 
 
 class Change(db.Model):
@@ -8,6 +10,6 @@ class Change(db.Model):
 
     category = db.Column(db.String(20), nullable=False, primary_key=True)
     page = db.Column(db.String(20), nullable=False, primary_key=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), primary_key=True)
     data = db.Column(db.JSON, nullable=False)
-    author = db.Column(UUIDType, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), primary_key=True)
+    author = db.Column(UUIDType, db.ForeignKey('user.id'), default=lambda: get_current_user().id, nullable=False)

@@ -1,31 +1,17 @@
-import enum
-
-from .mixins import UUIDKeyMixin
-from .ref import db
-from ..bcrypt import bcrypt
-from ..util import AuthenticationError
-from ..util.decorators import write_only_property
-
-
-class Role(enum.Enum):
-    admin = 'admin'
-    author = 'author'
+from server.common.database.mixins import UUIDKeyMixin
+from server.common.database.ref import db
+from server.common.util import AuthenticationError
+from server.common.util.enums import Role
+from server.common.util.password import PasswordType
 
 
 class User(UUIDKeyMixin, db.Model):
     __tablename__ = 'user'
 
-    @write_only_property
-    def password(self, value: str):
-        self.__password = bcrypt.generate_password_hash(value)
-
-    def check_password(self, password: str) -> bool:
-        return bcrypt.check_password_hash(self.__password, password)
-
     first_name = db.Column(db.String(63), nullable=False)
     last_name = db.Column(db.String(63), nullable=False)
     email = db.Column(db.String(127), nullable=False, unique=True)
-    __password = db.Column(db.String, name='password', nullable=False)
+    password = db.Column(PasswordType, nullable=False)
     role = db.Column(db.Enum(Role), nullable=False, default='author')
 
     @staticmethod
@@ -38,7 +24,7 @@ class User(UUIDKeyMixin, db.Model):
         if not user:
             raise AuthenticationError('User not found')
 
-        if not user.check_password(password):
+        if user.password != password:
             raise AuthenticationError('Password incorrect')
 
         return user

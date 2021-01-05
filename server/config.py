@@ -1,8 +1,9 @@
+import logging
 import os
 
 from flask import Flask
 
-from common.util import JSONEncoder
+from server.common.util import JSONEncoder
 
 
 def setup_config(app: Flask):
@@ -23,3 +24,4 @@ def setup_config(app: Flask):
 
     app.config.setdefault('RESTFUL_JSON', {}).setdefault('cls', JSONEncoder)
     app.config.setdefault('APISPEC_FORMAT_RESPONSE', None)
+    logging.basicConfig(level=app.config.get('LOG_LEVEL', logging.DEBUG if app.debug else logging.INFO))

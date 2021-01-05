@@ -1,5 +1,7 @@
-from common.database import Page
-from common.schema.ref import ma
+from marshmallow.validate import Range
+
+from server.common.database import Page
+from server.common.schema.ref import ma
 
 
 class PageSchema(ma.SQLAlchemyAutoSchema):
@@ -9,7 +11,7 @@ class PageSchema(ma.SQLAlchemyAutoSchema):
         dump_only = ('_links',)
         include_fk = True
 
-    order = ma.auto_field(min=0)
+    order = ma.auto_field(validate=[Range(min=0)])
     _links = ma.Hyperlinks({
         'self': ma.URLFor('page', values={'category_id': '<category>', 'page_id': '<id>'}),
         'collection': ma.URLFor('pages', values={'category_id': '<category>'}),

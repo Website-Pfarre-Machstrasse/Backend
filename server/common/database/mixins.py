@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy.dialects.postgresql import UUID
 
-from .ref import db
+from server.common.database.ref import db
 
 __all__ = ['UUIDKeyMixin', 'UUIDType', 'TrackUpdateMixin', 'TrackCreationMixin']
 

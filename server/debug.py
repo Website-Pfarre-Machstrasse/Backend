@@ -1,4 +1,4 @@
-from common.database import db, User
+from server.common.database import db, User
 
 
 def create_debug_admin():

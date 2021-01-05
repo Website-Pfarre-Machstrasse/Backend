@@ -7,13 +7,13 @@ from flask_apispec import doc, use_kwargs, utils
 from flask_apispec.annotations import annotate
 from flask_apispec.wrapper import Wrapper as OriginalWrapper, identity, MARSHMALLOW_VERSION_INFO
 from flask_apispec.wrapper import unpack, packed
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims, jwt_required as _jwt_required
+from flask_jwt_extended import get_jwt_claims, jwt_required as _jwt_required
 from werkzeug.exceptions import HTTPException
 
 from .exceptions import AuthorisationError, ServerError
 
 __all__ = ['admin_required', 'lazy_property', 'autodoc', 'write_only_property', 'tag', 'params',
-           'marshal_with', 'use_kwargs', 'transactional', 'jwt_required']
+           'marshal_with', 'use_kwargs', 'transactional', 'jwt_required', 'op_id']
 
 
 def transactional(session):
@@ -21,14 +21,19 @@ def transactional(session):
         @wraps(fn)
         def wrapper(*args, **kwargs):
             try:
-                with session.begin() as transaction:
-                    kwargs.update(_transaction=transaction)
-                    return fn(*args, **kwargs)
+                if session.autocommit:
+                    with session.begin() as transaction:
+                        kwargs.update(_transaction=transaction)
+                        return fn(*args, **kwargs)
+                else:
+                    with session.begin_nested() as transaction:
+                        kwargs.update(_transaction=transaction)
+                        return fn(*args, **kwargs)
             except Exception as e:
                 if isinstance(e, HTTPException):
                     raise e
                 else:
-                    raise ServerError(e)
+                    raise ServerError(e) from e
         return wrapper
     return decorator
 
@@ -36,13 +41,12 @@ def transactional(session):
 def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        verify_jwt_in_request()
         claims = get_jwt_claims()
         if claims['role'] != 'admin':
             raise AuthorisationError('Admins only!')
         else:
             return fn(*args, **kwargs)
-    return wrapper
+    return jwt_required(wrapper)
 
 
 def lazy_property(fn):
@@ -82,32 +86,60 @@ def parse_meta(s):
 
 
 def parse_doc(fn):
-    lines = fn.__doc__.split('\n')
-    if lines[0] == '' or lines[0].isspace():
-        lines.pop(0)
-    if lines[-1] == '' or lines[-1].isspace():
-        lines.pop()
-    lines = map(str.lstrip, lines)
-    lines = list(lines)
-    meta = filter(lambda s: s.startswith(':'), lines)
-    lines = filter(lambda s: not s.startswith(':'), lines)
-    meta = map(parse_meta, meta)
-    cleaned = '\n'.join(lines)
-    return {'description': cleaned, 'parameters': dict(meta)}
+    out = {}
+    if fn.__doc__:
+        lines = fn.__doc__.split('\n')
+        if lines[0] == '' or lines[0].isspace():
+            lines.pop(0)
+        if lines[-1] == '' or lines[-1].isspace():
+            lines.pop()
+        lines = map(str.lstrip, lines)
+        lines = list(lines)
+        meta = filter(lambda s: s.startswith(':'), lines)
+        lines = filter(lambda s: not s.startswith(':'), lines)
+        meta = map(parse_meta, meta)
+        meta = dict(meta)
+        summary = next(lines)
+        cleaned = summary
+        body = '\n'.join(lines)
+        if body:
+            cleaned += ('\n' + body)
+        summary = summary.lstrip('#').lstrip()
+        out['description'] = cleaned
+        out['summary'] = summary
+        if meta:
+            out['parameters'] = meta
+    if hasattr(fn, '__owner__'):
+        clazz = fn.__owner__
+        if fn.__name__ == 'get':
+            out['operationId'] = 'get'+clazz.__name__
+        if fn.__name__ == 'delete':
+            out['operationId'] = 'delete'+clazz.__name__
+        if fn.__name__ in ('patch', 'put'):
+            out['operationId'] = 'update'+clazz.__name__
+            if hasattr(clazz, 'put') and hasattr(clazz, 'patch'):
+                if fn.__name__ == 'patch':
+                    out['operationId'] += 'Partial'
+                elif fn.__name__ == 'put':
+                    out['operationId'] += 'Strict'
+        if fn.__name__ == 'post' and hasattr(clazz, '__child__'):
+            out['operationId'] = 'create'+clazz.__child__.__name__
+    return out
 
 
 def autodoc(fn):
-    if callable(fn) and fn.__doc__:
-        parsed_doc = parse_doc(fn)
-        return doc(description=parsed_doc['description'], params=parsed_doc['parameters'])(fn)
-    elif isinstance(fn, type):
+    if isinstance(fn, type):
         for name in fn.__dict__:
             attr = getattr(fn, name)
-            if callable(attr) and attr.__doc__ and name in ('get', 'put', 'post', 'patch', 'delete'):
+            if callable(attr) and name in ('get', 'put', 'post', 'patch', 'delete'):
+                attr.__owner__ = fn
                 setattr(fn, name, autodoc(attr))
         if fn.__doc__:
             parsed_doc = parse_doc(fn)
-            return doc(description=parsed_doc['description'], params=parsed_doc['parameters'])(fn)
+            return doc(**parsed_doc)(fn)
+    elif callable(fn):
+        parsed_doc = parse_doc(fn)
+        return doc(**parsed_doc)(fn)
     return fn
 
 
@@ -117,6 +149,10 @@ def jwt_required(fn):
 
 def auth_required(security):
     return doc(security=[{security: []}])
+
+
+def op_id(op_id):
+    return doc(operationId=op_id)
 
 
 def marshal_with(schema, code='default', description='', content_type=None, inherit=None, apply=None):

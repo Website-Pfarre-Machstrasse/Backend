@@ -3,6 +3,7 @@ import functools
 
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
+from flask import Flask
 from flask_apispec import FlaskApiSpec as Base
 from flask_apispec.apidoc import Converter as BaseConverter
 from flask_apispec.paths import CONVERTER_MAPPING, DEFAULT_TYPE
@@ -77,7 +78,7 @@ class Converter(BaseConverter):
                 options['location'] = 'body'
 
             if options['location'] not in ('body', 'json', 'form', 'files', 'json_or_form') \
-               or self.spec.openapi_version.major < 3:
+                or self.spec.openapi_version.major < 3:
                 extra_params += openapi_converter(schema, **options) if args else []
             elif args:
                 content_type = options.pop('content_type', None)
@@ -131,11 +132,11 @@ class Converter(BaseConverter):
                         .setdefault(status_code, {})
                         .setdefault('content', {})
                         .update({
-                            content_type: {
-                               'schema': meta['schema']
-                            } for content_type in content_types
-                        })
-                     )
+                        content_type: {
+                            'schema': meta['schema']
+                        } for content_type in content_types
+                    })
+                    )
                     exploded[status_code]['description'] = meta.get('description', '')
             options.append(exploded)
         return merge_recursive(options)
@@ -163,14 +164,17 @@ class FlaskApiSpec(Base):
     def handlers(self):
         return {'application/json': self.spec.to_dict, 'application/yaml': self.spec.to_yaml}
 
-    def init_app(self, app, plugins=None, hook=None):
+    def init_app(self, app: Flask, plugins=None, hook=None):
         self.app = app
         self.spec = self.app.config.get('APISPEC_SPEC') or \
                     make_apispec(self.app.config.get('APISPEC_TITLE', 'flask-apispec'),
                                  self.app.config.get('APISPEC_VERSION', 'v1'),
                                  self.app.config.get('APISPEC_OAS_VERSION', '2.0'),
                                  self.app.config.get('APISPEC_PLUGINS', plugins),
+                                 self.app.config.get('APISPEC_SERVERS', [])
                                  )
+        for name, scheme in self.app.config.get('APISPEC_AUTH', {}).items():
+            self.spec.components.security_scheme(name, scheme)
         self.add_swagger_routes()
         self.resource_converter = ResourceConverter(self.app, self.spec, self.document_options)
         self.view_converter = ViewConverter(self.app, self.spec, self.document_options)
@@ -187,24 +191,17 @@ class FlaskApiSpec(Base):
         return self.handlers[mime_type]()
 
 
-def make_apispec(title='flask-apispec', version='v1', openapi_version='2.0', plugins=None, **options):
+def make_apispec(title='flask-apispec', version='v1', openapi_version='2.0', plugins=None, servers=None, **options):
     if plugins is None:
         plugins = [MarshmallowPlugin()]
+    if servers is None:
+        servers = []
+    # noinspection PyTypeChecker
     return APISpec(
         title=title,
         version=version,
         openapi_version=openapi_version,
         plugins=plugins,
-        components={
-            'securitySchemes': {
-                'bearerAuth': {
-                    'type': 'http',
-                    'scheme': 'bearer',
-                    'bearerFormat': 'JWT'
-                }
-            }
-        }
+        servers=servers,
+        **options
     )
-
-
-doc = FlaskApiSpec()

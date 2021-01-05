@@ -1,6 +1,6 @@
 from marshmallow import fields
 
-from common.schema import ma
+from server.common.schema.ref import ma
 
 
 class MediaIdSchema(ma.Schema):

@@ -1,8 +1,7 @@
 from marshmallow import validates, ValidationError
 from werkzeug.datastructures import FileStorage
 
-from common.schema import ma
-from common.schema.ref import FileField
+from server.common.schema.ref import ma, FileField
 
 
 class FileSchema(ma.Schema):

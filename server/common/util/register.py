@@ -26,6 +26,7 @@ def register_resources(api, doc, app: Flask, marshmallow_plugin):
     register_resource(PagesResource, '/category/<string:category_id>/page', endpoint='pages')
     register_resource(PageResource, '/category/<string:category_id>/page/<string:page_id>', endpoint='page')
     register_resource(PageContentResource, '/category/<string:category_id>/page/<string:page_id>/content', endpoint='content')
+    register_resource(ChangesResource, '/category/<string:category_id>/page/<string:page_id>/changes', endpoint='changes')
     register_resource(MediasResource, '/media', endpoint='medias')
     register_resource(MediaResource, '/media/<uuid:media_id>', endpoint='media')
     register_resource(MediaDataResource, '/media/<uuid:media_id>/file', endpoint='media_file')
@@ -37,8 +38,9 @@ def register_resources(api, doc, app: Flask, marshmallow_plugin):
     app.extensions['restful'] = api
 
     def hook():
-        from common.schema.ref import enum2properties  # , hyperlinks2properties, urlfor2properties
+        from server.common.schema.ref import enum2properties, tuple2properties  # , hyperlinks2properties, urlfor2properties
         marshmallow_plugin.converter.add_attribute_function(enum2properties)
+        marshmallow_plugin.converter.add_attribute_function(tuple2properties)
         # marshmallow_plugin.converter.add_attribute_function(hyperlinks2properties)
         # marshmallow_plugin.converter.add_attribute_function(urlfor2properties)
 

@@ -1,2 +1,9 @@
-/server/*.db
-/server/settings*.json
+/*.db
+/settings*.json
+/.gitignore
+/.editorconfig
+/*.md
+/Pipfile*
+/dev-requirements.txt
+/swagger.json
+/tests/

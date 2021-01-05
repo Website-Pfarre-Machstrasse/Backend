@@ -1,4 +1,4 @@
-from .ref import db
+from server.common.database.ref import db
 
 
 class Category(db.Model):

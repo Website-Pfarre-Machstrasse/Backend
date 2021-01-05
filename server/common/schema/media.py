@@ -1,7 +1,7 @@
 from marshmallow import fields
 
-from common.database import Media
-from common.schema.ref import ma
+from server.common.database import Media
+from server.common.schema.ref import ma
 
 
 class MediaSchema(ma.SQLAlchemyAutoSchema):
@@ -12,11 +12,13 @@ class MediaSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True
 
     id = fields.UUID()
+    owner = ma.auto_field('owner_id')
     _links = ma.Hyperlinks({
         'self': ma.URLFor('media', values={'media_id': '<id>'}),
         'collection': ma.URLFor('medias'),
         'image': ma.URLFor('media_file', values={'media_id': '<id>'}),
-        'thumbnail': ma.URLFor('media_file', values={'media_id': '<id>', 'thumb': ''})
+        'thumbnail': ma.URLFor('media_file', values={'media_id': '<id>', 'thumb': ''}),
+        'owner': ma.URLFor('user', values={'user_id': '<owner>'})
     })
 
 
