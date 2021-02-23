@@ -1,5 +1,5 @@
 from flask_jwt_extended import (
-    get_current_user, jwt_refresh_token_required, get_jwt_identity, create_access_token, create_refresh_token
+    get_current_user, jwt_refresh_token_required, create_access_token, create_refresh_token
 )
 
 from server.common.database import User as UserModel
@@ -150,5 +150,5 @@ class Refresh(Resource):
         ## Request a new access_token for the current refresh_token in the Authorisation header
         """
         return {
-           'access_token': create_access_token(identity=get_jwt_identity())
+           'access_token': create_access_token(identity=get_current_user())
         }, 200

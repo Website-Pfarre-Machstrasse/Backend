@@ -1,4 +1,3 @@
-import logging
 import os
 
 from flask import Flask
@@ -9,7 +8,7 @@ from server.common.util import JSONEncoder
 def setup_config(app: Flask):
     config_file = os.environ.get('APP_CONFIG')
 
-    if not config_file or os.path.isfile(config_file):
+    if not config_file or not os.path.isfile(config_file):
         if app.debug:
             config_file = 'settings-dev.json'
         else:
@@ -24,4 +23,3 @@ def setup_config(app: Flask):
 
     app.config.setdefault('RESTFUL_JSON', {}).setdefault('cls', JSONEncoder)
     app.config.setdefault('APISPEC_FORMAT_RESPONSE', None)
-    logging.basicConfig(level=app.config.get('LOG_LEVEL', logging.DEBUG if app.debug else logging.INFO))
