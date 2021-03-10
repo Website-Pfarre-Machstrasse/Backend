@@ -1,5 +1,5 @@
 from flask_jwt_extended import (
-    get_current_user, jwt_refresh_token_required, get_jwt_identity, create_access_token, create_refresh_token
+    get_current_user, get_jwt_identity, create_access_token, create_refresh_token
 )
 
 from server.common.database import User as UserModel
@@ -19,7 +19,7 @@ __all__ = ['Self', 'User', 'Users', 'Login', 'Refresh']
 class Self(Resource):
 
     @op_id('self')
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserSchema, code=200)
     def get(self):
         """
@@ -40,7 +40,7 @@ class User(Resource):
         """
         return UserModel.query.get_or_404(user_id)
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(UserSchema(partial=True))
     @marshal_with(UserSchema, code=200)
     @transactional(db.session)
@@ -61,7 +61,7 @@ class User(Resource):
             setattr(user, k, v)
         return user
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(UserSchema)
     @marshal_with(UserSchema, code=200)
     @transactional(db.session)
@@ -99,7 +99,7 @@ class User(Resource):
 class Users(Resource):
     __child__ = User
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserSchema(many=True))
     def get(self):
         """
@@ -141,7 +141,7 @@ class Login(Resource):
 
 @tag('user')
 class Refresh(Resource):
-    method_decorators = [jwt_refresh_token_required]
+    method_decorators = [jwt_required(refresh=True)]
 
     @op_id('refresh')
     @marshal_with(TokenSchema(only={'access_token'}), code=200)

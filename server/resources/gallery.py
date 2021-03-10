@@ -22,7 +22,7 @@ class Gallery(Resource):
         """
         return GalleryModel.query.get_or_404(gallery_id)
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(GallerySchema)
     @marshal_with(GallerySchema, code=200)
     @transactional(db.session)
@@ -36,7 +36,7 @@ class Gallery(Resource):
             setattr(gallery, k, v)
         return gallery, 200
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(GallerySchema(partial=True))
     @marshal_with(GallerySchema, code=200)
     @transactional(db.session)
@@ -50,7 +50,7 @@ class Gallery(Resource):
             setattr(gallery, k, v)
         return gallery, 200
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(None, code=204)
     @transactional(db.session)
     def delete(self, gallery_id, _transaction):
@@ -63,7 +63,7 @@ class Gallery(Resource):
         return {}, 204
 
     @op_id('addMediaToGallery')
-    @jwt_required
+    @jwt_required()
     @use_kwargs(MediaIdSchema)
     @marshal_with(GallerySchema, code=201)
     @transactional(db.session)
@@ -92,7 +92,7 @@ class Galleries(Resource):
         """
         return GalleryModel.query.all()
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(GallerySchema)
     @marshal_with(GallerySchema, code=201)
     @transactional(db.session)
