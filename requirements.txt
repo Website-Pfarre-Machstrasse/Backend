@@ -17,3 +17,4 @@ marshmallow~=3.10.0
 marshmallow-enum~=1.5.1
 diff-match-patch
 pyyaml
+psycopg2

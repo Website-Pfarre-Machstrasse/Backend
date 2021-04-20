@@ -7,6 +7,7 @@ from server.common.util.password import PasswordType
 
 class User(UUIDKeyMixin, db.Model):
     __tablename__ = 'user'
+    query: db.Query
 
     first_name = db.Column(db.String(63), nullable=False)
     last_name = db.Column(db.String(63), nullable=False)

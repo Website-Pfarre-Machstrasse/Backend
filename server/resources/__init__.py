@@ -17,7 +17,7 @@ from .gallery import (
 from .media import (
     Media as MediaResource,
     Medias as MediasResource,
-    MediaData as MediaDataResource
+    MediaFile as MediaFileResource
 )
 from .user import (
     Self as SelfResource,
@@ -42,6 +42,6 @@ __all__ = ['SelfResource',
            'ChangesResource',
            'MediasResource',
            'MediaResource',
-           'MediaDataResource',
+           'MediaFileResource',
            'EventResource',
            'EventsResource']

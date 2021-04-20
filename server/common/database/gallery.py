@@ -10,6 +10,7 @@ gallery_media_relation = db.Table('gallery_media',
 
 class Gallery(UUIDKeyMixin, db.Model):
     __tablename__ = 'gallery'
+    query: db.Query
 
     title = db.Column(db.String(63), nullable=False)
     owner_id = db.Column(UUIDType, db.ForeignKey('user.id'), default=lambda: get_current_user().id, nullable=False)

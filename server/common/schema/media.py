@@ -16,7 +16,7 @@ class MediaSchema(ma.SQLAlchemyAutoSchema):
     _links = ma.Hyperlinks({
         'self': ma.URLFor('media', values={'media_id': '<id>'}),
         'collection': ma.URLFor('medias'),
-        'image': ma.URLFor('media_file', values={'media_id': '<id>'}),
+        'file': ma.URLFor('media_file', values={'media_id': '<id>'}),
         'thumbnail': ma.URLFor('media_file', values={'media_id': '<id>', 'thumb': ''}),
         'owner': ma.URLFor('user', values={'user_id': '<owner>'})
     })

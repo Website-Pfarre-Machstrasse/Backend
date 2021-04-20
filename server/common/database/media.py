@@ -6,6 +6,7 @@ from server.common.database.ref import db
 
 class Media(UUIDKeyMixin, db.Model):
     __tablename__ = 'media'
+    query: db.Query
 
     name = db.Column(db.String(127), nullable=False)
     mimetype = db.Column(db.String(127), nullable=False)

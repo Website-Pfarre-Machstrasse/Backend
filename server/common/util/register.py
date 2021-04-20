@@ -29,7 +29,7 @@ def register_resources(api, doc, app: Flask, marshmallow_plugin):
     register_resource(ChangesResource, '/category/<string:category_id>/page/<string:page_id>/changes', endpoint='changes')
     register_resource(MediasResource, '/media', endpoint='medias')
     register_resource(MediaResource, '/media/<uuid:media_id>', endpoint='media')
-    register_resource(MediaDataResource, '/media/<uuid:media_id>/file', endpoint='media_file')
+    register_resource(MediaFileResource, '/media/<uuid:media_id>/file', endpoint='media_file')
     register_resource(EventsResource, '/event', endpoint='events')
     register_resource(EventResource, '/event/<uuid:event_id>', endpoint='event')
 

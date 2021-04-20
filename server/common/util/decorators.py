@@ -8,12 +8,15 @@ from flask_apispec.annotations import annotate
 from flask_apispec.wrapper import Wrapper as OriginalWrapper, identity, MARSHMALLOW_VERSION_INFO
 from flask_apispec.wrapper import unpack, packed
 from flask_jwt_extended import get_jwt_claims, jwt_required as _jwt_required
+from sqlalchemy.orm.session import SessionTransaction
 from werkzeug.exceptions import HTTPException
 
 from .exceptions import AuthorisationError, ServerError
 
 __all__ = ['admin_required', 'lazy_property', 'autodoc', 'write_only_property', 'tag', 'params',
-           'marshal_with', 'use_kwargs', 'transactional', 'jwt_required', 'op_id']
+           'marshal_with', 'use_kwargs', 'transactional', 'jwt_required', 'op_id', 'Transaction']
+
+Transaction = SessionTransaction
 
 
 def transactional(session):
@@ -22,7 +25,7 @@ def transactional(session):
         def wrapper(*args, **kwargs):
             try:
                 if session.autocommit:
-                    with session.begin() as transaction:
+                    with session.begin() as transaction:  # type: Transaction
                         kwargs.update(_transaction=transaction)
                         return fn(*args, **kwargs)
                 else:

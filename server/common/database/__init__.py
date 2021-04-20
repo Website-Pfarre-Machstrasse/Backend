@@ -11,4 +11,5 @@ __all__ = ['db', 'User', 'Category', 'Page', 'Change', 'Media', 'Gallery', 'Even
 
 
 def setup(app):
-    db.create_all(app=app)
+    # db.create_all(app=app)
+    pass
