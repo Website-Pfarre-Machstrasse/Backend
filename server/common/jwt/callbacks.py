@@ -6,13 +6,13 @@ __all__ = []
 
 
 @jwt.user_claims_loader
-def add_claims_to_access_token(user: User):
+def add_claims_to_access_token(user):
     return {'role': user.role.name}
 
 
 @jwt.user_identity_loader
 def user_identity_lookup(user):
-    return user.id
+    return user.id if isinstance(user, User) else user
 
 
 @jwt.user_loader_callback_loader

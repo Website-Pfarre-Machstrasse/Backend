@@ -26,10 +26,12 @@ def init_extensions(app: Flask):
     tinify.init_app(app)
 
 
-def create_app():
-    app = Flask(__name__, static_folder=None, template_folder=None, root_path=os.getcwd())
-    print(app.root_path)
+def create_app(name=__name__):
+    from server._logging import setup_logging_config, setup_logging
+    setup_logging()
+    app = Flask(name, static_folder=None, template_folder=None, root_path=os.getcwd())
     setup_config(app)
+    setup_logging_config(app)
     init_extensions(app)
     setup_db(app)
     from server.common.util.register import register_resources

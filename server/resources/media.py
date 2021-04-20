@@ -101,6 +101,7 @@ class Medias(Resource):
         save_path = get_save_path(media_type)
         media = MediaModel(name=name, mimetype=mimetype, extension=ext)
         _transaction.session.add(media)
+        _transaction.session.flush()
         if media_type == 'image':
             if tinify.key:
                 with file.stream as stream:

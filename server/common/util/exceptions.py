@@ -39,7 +39,7 @@ class AuthorisationError(CustomHTTPException):
 
 
 class AuthenticationError(CustomHTTPException):
-    code = 403
+    code = 401
 
 
 class ServerError(CustomHTTPException):
