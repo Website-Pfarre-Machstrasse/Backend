@@ -37,6 +37,12 @@ def create_app():
     from server.common.util.register import register_resources
     register_resources(api, doc, app, marshmallow_plugin)
 
+    from jwt import InvalidSignatureError
+
+    @app.errorhandler(InvalidSignatureError)
+    def handle(e: InvalidSignatureError):
+        return e.args[0], 401
+
     if app.debug:
         from .debug import create_debug_admin
         with app.app_context():
