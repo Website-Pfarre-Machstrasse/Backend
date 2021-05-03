@@ -14,7 +14,7 @@ from server.common.util import RequestError, params, tag, marshal_with, use_kwar
     jwt_required, transactional, Transaction
 
 
-def cache_content(page: PageModel) -> str:
+def cache_content(page: PageModel, **kwargs) -> str:
     content = ''
     for diffs in page.content:
         patches = diff_maker.patch_make(content, diffs.data)
@@ -22,7 +22,7 @@ def cache_content(page: PageModel) -> str:
     return content
 
 
-def validate_cache(cache_version, page: PageModel = None) -> bool:
+def validate_cache(cache_version, page: PageModel = None, **kwargs) -> bool:
     if not page.last_update:
         return False
     return page.last_update <= cache_version
