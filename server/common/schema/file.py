@@ -9,7 +9,7 @@ def validate_media_file(file: FileStorage, /, allowed: list = None, app=None, co
     if not allowed:
         if not config:
             if not app:
-                app = current_app()
+                app = current_app
             config = app.config
         allowed = config.get('ALLOWED_MEDIA_TYPES', [])
 

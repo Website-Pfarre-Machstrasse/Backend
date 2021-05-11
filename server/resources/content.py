@@ -191,6 +191,7 @@ class Pages(Resource):
         ## Create a page in the category (category_id)
         ***Requires Authentication***
         """
+        kwargs.pop('category_id')
         page = PageModel(**kwargs)
         _transaction.session.add(page)
         return page, 201

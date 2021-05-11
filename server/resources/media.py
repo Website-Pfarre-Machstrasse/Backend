@@ -7,7 +7,7 @@ from server.common.database import db
 from server.common.database.media import Media as MediaModel
 from server.common.database.user import Role
 from server.common.rest import Resource
-from server.common.schema import MediaSchema
+from server.common.schema import MediaSchema, MediaFilterSchema
 from server.common.schema.file import MediaUploadSchema
 from server.common.tinify import tinify
 from server.common.util import AuthorisationError, use_kwargs
@@ -38,7 +38,8 @@ class MediaFile(Resource):
 
         thumb = 'thumb' in request.args
         mimetype = 'image/png' if thumb else media.mimetype
-        return send_file(file_path(media, thumb),
+        path = file_path(media, thumb)
+        return send_file(path,
                          mimetype=mimetype,
                          as_attachment='attachment' in request.args,
                          attachment_filename=f"{media.name}.{media.extension}")
@@ -116,12 +117,16 @@ def handle_video_upload(file, thumbnail, save_path, media):
 class Medias(Resource):
     __child__ = Media
 
+    @use_kwargs(MediaFilterSchema, location='query')
     @marshal_with(MediaSchema(many=True), code=200)
-    def get(self):
+    def get(self, type: str = None):
         """
         ## Get the media library
         """
-        return MediaModel.query.all()
+        query = MediaModel.query
+        if type:
+            query = query.filter(MediaModel.mimetype.startswith(type))
+        return query.all()
 
     @jwt_required
     @use_kwargs(MediaUploadSchema, location='files')

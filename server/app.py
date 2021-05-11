@@ -37,8 +37,11 @@ def create_app():
     from server.common.util.register import register_resources
     register_resources(api, doc, app, marshmallow_plugin)
 
-    from jwt import InvalidSignatureError
+    from jwt import InvalidSignatureError, ExpiredSignatureError
+    from flask_jwt_extended.exceptions import NoAuthorizationError
 
+    @app.errorhandler(NoAuthorizationError)
+    @app.errorhandler(ExpiredSignatureError)
     @app.errorhandler(InvalidSignatureError)
     def handle(e: InvalidSignatureError):
         return e.args[0], 401
