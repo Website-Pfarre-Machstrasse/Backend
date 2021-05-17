@@ -9,7 +9,7 @@ class Page(db.Model):
     id = db.Column(db.String(20), nullable=False, primary_key=True)
     order = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(63), nullable=False)
-    content = db.relationship("Change")
+    content = db.relationship("Change", cascade="all, delete-orphan")
 
     @property
     def last_update(self):
