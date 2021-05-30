@@ -1,5 +1,5 @@
 from flask_jwt_extended import (
-    get_current_user, jwt_refresh_token_required, create_access_token, create_refresh_token
+    get_current_user, create_access_token, create_refresh_token
 )
 
 from server.common.database import User as UserModel
@@ -19,7 +19,7 @@ __all__ = ['Self', 'User', 'Users', 'Login', 'Refresh']
 class Self(Resource):
 
     @op_id('self')
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserSchema, code=200)
     def get(self):
         """
@@ -40,7 +40,7 @@ class User(Resource):
         """
         return UserModel.query.get_or_404(user_id)
 
-    @jwt_required
+    @jwt_required(fresh=True)
     @use_kwargs(UserSchema(partial=True))
     @marshal_with(UserSchema, code=200)
     @transactional(db.session)
@@ -55,15 +55,15 @@ class User(Resource):
         current = get_current_user()
         if user is not current and current.role != Role.admin:
             raise AuthorisationError('You are not allowed to modify this user')
-        if 'password' in kwargs and kwargs['password'] != user.password:
-            pass  # TODO
         for k, v in kwargs.items():
-            setattr(user, k, v)
+            if getattr(user, k) != v:
+                setattr(user, k, v)
         return user
 
-    @jwt_required
+    @jwt_required(fresh=True)
     @use_kwargs(UserSchema)
     @marshal_with(UserSchema, code=200)
+    @marshal_with(UserSchema, code=201)
     @transactional(db.session)
     def put(self, user_id, _transaction, **kwargs):
         """
@@ -72,15 +72,19 @@ class User(Resource):
 
         You can only edit yourself if you are not admin
         """
-        user = UserModel.query.get_or_404(user_id)
+        user = UserModel.query.get(user_id)
         current = get_current_user()
-        if user.id != get_current_user().id and current.role is not Role.admin:
-            raise AuthorisationError('You are not allowed to modify this user')
-        if kwargs['password'] != user.password:
-            pass  # TODO
-        for k, v in kwargs.items():
-            setattr(user, k, v)
-        return user
+        if not user and current.role == Role.admin:
+            user = UserModel(**kwargs)
+            _transaction.session.add(user)
+            return user, 201
+        else:
+            if user.id != get_current_user().id and current.role is not Role.admin:
+                raise AuthorisationError('You are not allowed to modify this user')
+            for k, v in kwargs.items():
+                if getattr(user, k) != v:
+                    setattr(user, k, v)
+            return user
 
     @admin_required
     @marshal_with(None, code=204)
@@ -99,7 +103,7 @@ class User(Resource):
 class Users(Resource):
     __child__ = User
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(UserSchema(many=True))
     def get(self):
         """
@@ -134,16 +138,16 @@ class Login(Resource):
         """
         user = UserModel.authenticate(**kwargs)
         return {
-           'access_token': create_access_token(identity=user),
+           'access_token': create_access_token(identity=user, fresh=True),
            'refresh_token': create_refresh_token(identity=user)
         }, 200
 
 
 @tag('user')
 class Refresh(Resource):
-    method_decorators = [jwt_refresh_token_required]
 
     @op_id('refresh')
+    @jwt_required(refresh=True)
     @marshal_with(TokenSchema(only={'access_token'}), code=200)
     def post(self):
         """

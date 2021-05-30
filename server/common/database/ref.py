@@ -1,7 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 
-db = SQLAlchemy()
+
+db = SQLAlchemy(session_options={'autocommit': True})
 
 
 def coercion_listener(mapper, class_):

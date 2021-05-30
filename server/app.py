@@ -26,16 +26,25 @@ def init_extensions(app: Flask):
     tinify.init_app(app)
 
 
-def create_app(name=__name__):
+def create_app():
     from server._logging import setup_logging_config, setup_logging
     setup_logging()
-    app = Flask(name, static_folder=None, template_folder=None, root_path=os.getcwd())
+    app = Flask(__name__, static_folder=None, template_folder=None, root_path=os.getcwd())
     setup_config(app)
     setup_logging_config(app)
     init_extensions(app)
     setup_db(app)
     from server.common.util.register import register_resources
     register_resources(api, doc, app, marshmallow_plugin)
+
+    from jwt import InvalidSignatureError, ExpiredSignatureError
+    from flask_jwt_extended.exceptions import NoAuthorizationError
+
+    @app.errorhandler(NoAuthorizationError)
+    @app.errorhandler(ExpiredSignatureError)
+    @app.errorhandler(InvalidSignatureError)
+    def handle(e: InvalidSignatureError):
+        return e.args[0], 401
 
     if app.debug:
         from .debug import create_debug_admin

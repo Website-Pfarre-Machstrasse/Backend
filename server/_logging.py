@@ -1,4 +1,5 @@
 import logging
+import sys
 
 
 def setup_logging():
@@ -6,17 +7,20 @@ def setup_logging():
 
 
 def setup_logging_config(app):
-    pass
-    # from flask import logging as flog
-    # log_config = app.config.get_namespace('LOG_')
-    # log_config.setdefault('level', logging.DEBUG if app.debug else logging.INFO)
-    # log_config.setdefault('style', '{')
-    # werkzeug_logger = logging.getLogger('werkzeug')
-    # if werkzeug_logger.handlers:
-    #     werkzeug_logger.removeHandler(werkzeug_logger.handlers[0])
-    # app.logger.removeHandler(flog.default_handler)
-    #
-    # if 'file' in log_config:
-    #     log_config['filename'] = log_config.pop('file')
-    #
-    # logging.basicConfig(**log_config)
+    log_config = app.config.get_namespace('LOG_')
+    log_config.setdefault('level', logging.DEBUG if app.debug else logging.INFO)
+    log_config.setdefault('style', '{')
+    werkzeug_logger = logging.getLogger('werkzeug')
+    if werkzeug_logger.handlers:
+        werkzeug_logger.removeHandler(werkzeug_logger.handlers[0])
+    if app.logger.handlers and len(app.logger.handlers) >= 1:
+        for h in app.logger.handlers:
+            app.logger.removeHandler(h)
+
+    if 'file' in log_config:
+        log_config['filename'] = log_config.pop('file')
+
+    if 'filename' not in log_config:
+        log_config['stream'] = sys.stdout
+
+    logging.basicConfig(**log_config)

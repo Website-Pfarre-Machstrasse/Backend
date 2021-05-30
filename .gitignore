@@ -1,6 +1,6 @@
-/Pipfile.lock
 /*.db
-/settings*.json
+settings*.json
+!settings-test.json
 /dist/
 /build/
-/dev.log
+*.log

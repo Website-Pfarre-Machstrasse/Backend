@@ -32,7 +32,7 @@ class ModelConverter(BaseModelConverter):
         super(ModelConverter, self)._add_column_kwargs(kwargs, column)
         if hasattr(column, 'type') and isinstance(column.type, sa.Enum):
             kwargs['enum'] = column.type.enum_class
-            kwargs['doc_default'] = column.default.arg
+            kwargs['metadata']['doc_default'] = column.default.arg
             kwargs['validate'] = list(
                 filter(
                     lambda v: not isinstance(v, (validate.Length, validate.OneOf)),

@@ -3,12 +3,13 @@ from server.common.database.ref import db
 
 class Page(db.Model):
     __tablename__ = 'page'
+    query: db.Query
 
     category = db.Column(db.String(20), db.ForeignKey('category.id'), nullable=False, primary_key=True)
     id = db.Column(db.String(20), nullable=False, primary_key=True)
     order = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(63), nullable=False)
-    content = db.relationship("Change")
+    content = db.relationship("Change", cascade="all, delete-orphan")
 
     @property
     def last_update(self):

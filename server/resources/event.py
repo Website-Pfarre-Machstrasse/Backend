@@ -22,7 +22,7 @@ class Event(Resource):
         """
         return EventModel.query.get_or_404(event_id)
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(EventSchema)
     @marshal_with(EventSchema, code=200)
     def put(self, event_id, **kwargs):
@@ -38,7 +38,7 @@ class Event(Resource):
             setattr(event, k, v)
         return event
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(EventSchema(partial=True))
     @marshal_with(EventSchema, code=200)
     def patch(self, event_id, **kwargs):
@@ -54,7 +54,7 @@ class Event(Resource):
             setattr(event, k, v)
         return event
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(None, code=204)
     @transactional(db.session)
     def delete(self, event_id, _transaction):
@@ -94,7 +94,7 @@ class Events(Resource):
         filters.append(EventModel.end > start)
         return EventModel.query.filter(*filters).all()
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(EventSchema)
     @marshal_with(EventSchema, code=201)
     @transactional(db.session)

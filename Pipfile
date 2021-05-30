@@ -8,6 +8,7 @@ pytest = "*"
 
 [packages]
 gunicorn = "*"
+werkzeug = "*"
 flask = "*"
 flask-bcrypt = "*"
 flask-sqlalchemy = "*"
@@ -24,4 +25,4 @@ diff-match-patch = "*"
 pyyaml = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"

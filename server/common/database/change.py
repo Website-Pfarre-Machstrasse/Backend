@@ -7,6 +7,7 @@ from server.common.database.ref import db
 class Change(db.Model):
     __tablename__ = 'change'
     __table_args__ = (db.ForeignKeyConstraint(('category', 'page'), ('page.category', 'page.id')),)
+    query: db.Query
 
     category = db.Column(db.String(20), nullable=False, primary_key=True)
     page = db.Column(db.String(20), nullable=False, primary_key=True)

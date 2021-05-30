@@ -1,0 +1,41 @@
+{
+  "ENV": "testing",
+  "SECRET_KEY": "supersecretkey",
+  "FILE_STORE": "./files",
+  "ALLOWED_MEDIA_TYPES": [
+    "image",
+    "video",
+    "audio",
+    "application/pdf"
+  ],
+  "SQLALCHEMY_TRACK_MODIFICATIONS": true,
+  "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+  "CORS": {
+    "/api/.*": {
+      "origins": "*",
+      "allow_headers": "*"
+    }
+  },
+  "APISPEC_SWAGGER_URL": "/swagger/",
+  "APISPEC_SWAGGER_UI_URL": "/swagger-ui/",
+  "APISPEC_TITLE": "Website Pfarre Machstrasse - API",
+  "APISPEC_VERSION": "v1",
+  "APISPEC_OAS_VERSION": "3.0.2",
+  "APISPEC_SERVERS": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://pfarre-machstrasse.at",
+      "description": "Production Server"
+    }
+  ],
+  "APISPEC_AUTH": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT"
+    }
+  }
+}

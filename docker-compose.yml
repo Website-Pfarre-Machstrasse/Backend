@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  backend:
+    image: "localhost:49153/pfarre-machstrasse-backend"
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - "./files:/files"
+      - "./settings-prod.json:/settings-prod.json"
+    environment:
+      APP_CONFIG: "settings-prod.json"
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"

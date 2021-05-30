@@ -121,6 +121,11 @@
                         "readOnly": true,
                         "type": "string"
                     },
+                    "media": {
+                        "format": "uuid",
+                        "nullable": true,
+                        "type": "string"
+                    },
                     "name": {
                         "maxLength": 127,
                         "type": "string"
@@ -162,6 +167,11 @@
                         "readOnly": true,
                         "type": "string"
                     },
+                    "media": {
+                        "format": "uuid",
+                        "nullable": true,
+                        "type": "string"
+                    },
                     "name": {
                         "maxLength": 127,
                         "type": "string"
@@ -176,18 +186,6 @@
                         "type": "string"
                     }
                 },
-                "type": "object"
-            },
-            "File": {
-                "properties": {
-                    "file": {
-                        "format": "binary",
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "file"
-                ],
                 "type": "object"
             },
             "Gallery": {
@@ -313,6 +311,22 @@
                 },
                 "required": [
                     "media_id"
+                ],
+                "type": "object"
+            },
+            "MediaUpload": {
+                "properties": {
+                    "file": {
+                        "format": "binary",
+                        "type": "string"
+                    },
+                    "thumbnail": {
+                        "format": "binary",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "file"
                 ],
                 "type": "object"
             },
@@ -1703,6 +1717,11 @@
                         "description": ""
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "summary": "Delete the last change made to this page",
                 "tags": [
                     "content"
@@ -1962,6 +1981,30 @@
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1event/get"
                             },
+                            "media_delete": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_get": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_patch": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/patch",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_put": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/put",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
                             "modify_partial": {
                                 "operationRef": "#/paths/~1api~1event~1{event_id}/patch",
                                 "parameters": {
@@ -2049,6 +2092,30 @@
                             },
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "media_delete": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_get": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_patch": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/patch",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_put": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/put",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
                             },
                             "modify_partial": {
                                 "operationRef": "#/paths/~1api~1event~1{event_id}/patch",
@@ -2178,6 +2245,30 @@
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1event/get"
                             },
+                            "media_delete": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_get": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_patch": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/patch",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_put": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/put",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
                             "modify_partial": {
                                 "operationRef": "#/paths/~1api~1event~1{event_id}/patch",
                                 "parameters": {
@@ -2275,6 +2366,30 @@
                             },
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "media_delete": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_get": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_patch": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/patch",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_put": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/put",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
                             },
                             "modify_partial": {
                                 "operationRef": "#/paths/~1api~1event~1{event_id}/patch",
@@ -2378,6 +2493,30 @@
                             },
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1event/get"
+                            },
+                            "media_delete": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_get": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_patch": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/patch",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
+                            },
+                            "media_put": {
+                                "operationRef": "#/paths/~1api~1user~1{user_id}/put",
+                                "parameters": {
+                                    "media_id": "$response.body#/media"
+                                }
                             },
                             "modify_partial": {
                                 "operationRef": "#/paths/~1api~1event~1{event_id}/patch",
@@ -3139,6 +3278,12 @@
                                     "media_id": "$response.body#/id"
                                 }
                             },
+                            "file_get": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
                             "get": {
                                 "operationRef": "#/paths/~1api~1media~1{media_id}/get",
                                 "parameters": {
@@ -3147,12 +3292,6 @@
                             },
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1media/get"
-                            },
-                            "image_get": {
-                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
-                                "parameters": {
-                                    "media_id": "$response.body#/id"
-                                }
                             },
                             "owner_delete": {
                                 "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
@@ -3201,7 +3340,7 @@
                     "content": {
                         "multipart/formdata": {
                             "schema": {
-                                "$ref": "#/components/schemas/File"
+                                "$ref": "#/components/schemas/MediaUpload"
                             }
                         }
                     },
@@ -3228,6 +3367,12 @@
                                     "media_id": "$response.body#/id"
                                 }
                             },
+                            "file_get": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
                             "get": {
                                 "operationRef": "#/paths/~1api~1media~1{media_id}/get",
                                 "parameters": {
@@ -3236,12 +3381,6 @@
                             },
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1media/get"
-                            },
-                            "image_get": {
-                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
-                                "parameters": {
-                                    "media_id": "$response.body#/id"
-                                }
                             },
                             "owner_delete": {
                                 "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
@@ -3357,6 +3496,12 @@
                                     "media_id": "$response.body#/id"
                                 }
                             },
+                            "file_get": {
+                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
+                                "parameters": {
+                                    "media_id": "$response.body#/id"
+                                }
+                            },
                             "get": {
                                 "operationRef": "#/paths/~1api~1media~1{media_id}/get",
                                 "parameters": {
@@ -3365,12 +3510,6 @@
                             },
                             "get_all": {
                                 "operationRef": "#/paths/~1api~1media/get"
-                            },
-                            "image_get": {
-                                "operationRef": "#/paths/~1api~1media~1{media_id}~1file/get",
-                                "parameters": {
-                                    "media_id": "$response.body#/id"
-                                }
                             },
                             "owner_delete": {
                                 "operationRef": "#/paths/~1api~1user~1{user_id}/delete",
@@ -3415,7 +3554,7 @@
         "/api/media/{media_id}/file": {
             "get": {
                 "description": "## Get the file for the media with the id media_id",
-                "operationId": "getMediaData",
+                "operationId": "getMediaFile",
                 "parameters": [
                     {
                         "description": "The id of the Media",
@@ -3933,12 +4072,8 @@
     },
     "servers": [
         {
-            "description": "Local Development Server",
-            "url": "http://localhost:5000"
-        },
-        {
-            "description": "Production Server",
-            "url": "https://pfarre-machstrasse.at"
+            "description": "Demo Server",
+            "url": "https://minecraftschurli.ddns.net/pfarre-machstrasse"
         }
     ]
 }
