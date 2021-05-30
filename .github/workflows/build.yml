@@ -59,7 +59,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pipenv run pytest tests --doctest-modules --junitxml=junit/test-results.xml
+          pipenv run pytest tests/test.py --doctest-modules --junitxml=junit/test-results.xml
 
       - name: Lint with flake8
         run: |
