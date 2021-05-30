@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types:
       - opened
@@ -39,7 +39,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: "3.9"
 
       - name: Install pipenv
         run: |
