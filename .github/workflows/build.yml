@@ -56,11 +56,10 @@ jobs:
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
           pipenv install --deploy --dev
-          pipenv run pip freeze
 
       - name: Test with pytest
         run: |
-          pytest tests --doctest-modules --junitxml=junit/test-results.xml
+          pipenv run pytest tests --doctest-modules --junitxml=junit/test-results.xml
 
       - name: Lint with flake8
         run: |
