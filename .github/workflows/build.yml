@@ -61,9 +61,9 @@ jobs:
         run: |
           pipenv run pytest tests/test.py --doctest-modules --junitxml=junit/test-results.xml
 
-      - name: Lint with flake8
-        run: |
-          flake8 .
+#      - name: Lint with flake8
+#        run: |
+#          flake8 .
 
 #      - name: Run formatting check
 #        run: |
