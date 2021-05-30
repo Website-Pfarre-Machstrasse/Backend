@@ -1,5 +1,6 @@
 /*.db
 settings*.json
+!settings-test.json
 /dist/
 /build/
 *.log

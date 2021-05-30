@@ -8,8 +8,9 @@ __all__ = ['UUIDKeyMixin', 'UUIDType', 'TrackUpdateMixin', 'TrackCreationMixin']
 
 
 class UUIDType(db.TypeDecorator):
-
     impl = db.CHAR
+
+    cache_ok = True
 
     def load_dialect_impl(self, dialect):
         if dialect.name == 'postgresql':
