@@ -56,7 +56,7 @@ class Media(Resource):
         """
         return MediaModel.query.get_or_404(media_id)
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(None, code=204)
     @transactional(db.session)
     def delete(self, media_id, _transaction):
@@ -128,7 +128,7 @@ class Medias(Resource):
             query = query.filter(MediaModel.mimetype.startswith(type))
         return query.all()
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(MediaUploadSchema, location='files')
     @marshal_with(MediaSchema, code=201)
     @transactional(db.session)

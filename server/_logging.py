@@ -13,7 +13,9 @@ def setup_logging_config(app):
     werkzeug_logger = logging.getLogger('werkzeug')
     if werkzeug_logger.handlers:
         werkzeug_logger.removeHandler(werkzeug_logger.handlers[0])
-    app.logger.removeHandler(app.logger.handlers[0])
+    if app.logger.handlers and len(app.logger.handlers) >= 1:
+        for h in app.logger.handlers:
+            app.logger.removeHandler(h)
 
     if 'file' in log_config:
         log_config['filename'] = log_config.pop('file')

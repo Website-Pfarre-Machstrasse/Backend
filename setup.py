@@ -24,7 +24,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     scripts=['./backup.sh', './restore.sh', './start.sh'],
-    requires=[
+    install_requires=[
         'flask',
         'flask-bcrypt',
         'flask-sqlalchemy',

@@ -7,7 +7,7 @@ from flask_apispec import doc, use_kwargs, utils
 from flask_apispec.annotations import annotate
 from flask_apispec.wrapper import Wrapper as OriginalWrapper, identity, MARSHMALLOW_VERSION_INFO
 from flask_apispec.wrapper import unpack, packed
-from flask_jwt_extended import get_jwt_claims, jwt_required as _jwt_required
+from flask_jwt_extended import get_jwt, jwt_required as _jwt_required
 from sqlalchemy.orm.session import SessionTransaction
 from werkzeug.exceptions import HTTPException
 
@@ -44,12 +44,12 @@ def transactional(session):
 def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        claims = get_jwt_claims()
+        claims = get_jwt()
         if claims['role'] != 'admin':
             raise AuthorisationError('Admins only!')
         else:
             return fn(*args, **kwargs)
-    return jwt_required(wrapper)
+    return jwt_required()(wrapper)
 
 
 def lazy_property(fn):
@@ -146,8 +146,8 @@ def autodoc(fn):
     return fn
 
 
-def jwt_required(fn):
-    return auth_required('bearerAuth')(_jwt_required(fn))
+def jwt_required(**kwargs):
+    return lambda fn: auth_required('bearerAuth')(_jwt_required(**kwargs)(fn))
 
 
 def auth_required(security):

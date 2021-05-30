@@ -4,9 +4,14 @@ RUN apt-get update && \
     apt-get install -y gcc musl-dev libpq-dev && \
     apt-get clean
 ADD requirements.txt /
+ADD ./server /server
+ADD setup.py /
+ADD setup.cfg /
+ADD README.md /
+ADD backup.sh /
+ADD restore.sh /
 RUN pip3 install -r requirements.txt --no-cache-dir
 RUN apt-get clean
-ADD ./server /server
 ADD gunicorn_config.py /
 ADD start.sh /
 EXPOSE 5000

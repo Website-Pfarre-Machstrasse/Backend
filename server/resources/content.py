@@ -47,7 +47,7 @@ class PageContent(Resource):
         page: PageModel = PageModel.query.get_or_404(key)
         return content_cache.get(key, page=page)
 
-    @jwt_required
+    @jwt_required()
     @marshal_with({'type': 'string', 'format': 'markdown'}, code=201, content_type='text/markdown', apply=False)
     @transactional(db.session)
     def put(self, category_id: str, page_id: str, _transaction: Transaction) -> Tuple[str, int]:
@@ -90,7 +90,7 @@ class Changes(Resource):
             .order_by(ChangeModel.created_at)\
             .all()
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(None, code=204)
     @transactional(db.session)
     def delete(self, category_id: str, page_id: str, _transaction: Transaction) -> DeleteReturn:
@@ -116,7 +116,7 @@ class Page(Resource):
         """
         return PageModel.query.get_or_404((category_id, page_id))
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(PageSchema(partial=True), required=True)
     @marshal_with(PageSchema, code=200)
     @marshal_with(PageSchema, code=201)
@@ -133,7 +133,7 @@ class Page(Resource):
             setattr(page, k, v)
         return page
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(PageSchema, required=True)
     @marshal_with(PageSchema, code=200)
     @marshal_with(PageSchema, code=201)
@@ -157,7 +157,7 @@ class Page(Resource):
             _transaction.session.add(page)
             return page, 201
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(None, code=204)
     @transactional(db.session)
     def delete(self, category_id: str, page_id: str, _transaction: Transaction) -> DeleteReturn:
@@ -182,7 +182,7 @@ class Pages(Resource):
         """
         return CategoryModel.query.get_or_404(category_id).pages
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(PageSchema, required=True)
     @marshal_with(PageSchema, code=201)
     @transactional(db.session)
@@ -209,7 +209,7 @@ class Category(Resource):
         """
         return CategoryModel.query.get_or_404(category_id)
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(CategorySchema(partial=True))
     @marshal_with(CategorySchema, code=200)
     @transactional(db.session)
@@ -223,7 +223,7 @@ class Category(Resource):
             setattr(category, k, v)
         return category
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(CategorySchema)
     @marshal_with(CategorySchema, code=200)
     @marshal_with(CategorySchema, code=201)
@@ -243,7 +243,7 @@ class Category(Resource):
             _transaction.session.add(category)
             return category, 201
 
-    @jwt_required
+    @jwt_required()
     @marshal_with(None, code=204)
     @transactional(db.session)
     def delete(self, category_id: str, _transaction: Transaction) -> DeleteReturn:
@@ -267,7 +267,7 @@ class Categories(Resource):
         """
         return CategoryModel.query.all()
 
-    @jwt_required
+    @jwt_required()
     @use_kwargs(CategorySchema, required=True)
     @marshal_with(CategorySchema, code=201)
     @transactional(db.session)
