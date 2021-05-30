@@ -85,7 +85,8 @@ def test_users(client):
     assert resp.json['email'] == 'admin.email@test.com'
     assert resp.json['id'] == uid
 
-    resp = client.patch(f'/api/user/{uid}', json={'first_name': 'New', 'password': 'NewPass'}, headers=headers)  # type: "TestResponse"
+    resp = client.patch(f'/api/user/{uid}',
+                        json={'first_name': 'New', 'password': 'NewPass'}, headers=headers)  # type: "TestResponse"
     assert resp.status_code == 200
     assert resp.json['email'] == 'admin.email@test.com'
     assert resp.json['id'] == uid
@@ -100,3 +101,19 @@ def test_users(client):
     assert resp.json['email'] == 'admin.email@test.com'
     assert resp.json['id'] == uid
     assert resp.json['first_name'] == 'New'
+
+
+def test_event(client):
+    pass  # TODO
+
+
+def test_gallery(client):
+    pass  # TODO
+
+
+def test_media(client):
+    pass  # TODO
+
+
+def test_content(client):
+    pass  # TODO
